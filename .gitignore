@@ -1,0 +1,21 @@
+# Ignorar carpeta Binari (builds)
+Binari/
+
+# Ignorar archivos y carpetas de Unity
+Projecte/[Ll]ibrary/
+Projecte/[Tt]emp/
+Projecte/[Oo]bj/
+Projecte/[Bb]uild/
+Projecte/[Bb]uilds/
+Projecte/[Ll]ogs/
+Projecte/UserSettings/
+Projecte/MemoryCaptures/
+
+# Archivos temporales y del sistema
+Projecte/*.csproj
+Projecte/*.sln
+Projecte/.vs/
+Projecte/.idea/
+Projecte/.vscode/
+.DS_Store
+Thumbs.db
