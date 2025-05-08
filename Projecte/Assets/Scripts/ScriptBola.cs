@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class ScriptBola : MonoBehaviour
 {
-    public bool gameStarted = false;
+    public bool gameStarted;
+
+    public bool godMode;
 
     public float speed = 10f;
     public float maxBounceAngle = 75f;
@@ -17,6 +19,10 @@ public class ScriptBola : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        transform.position = new Vector3(0, 0.5f, -4f);
+        gameStarted = false;
+        godMode = false;
+
         rb = GetComponent<Rigidbody>();
 
         if (rb == null)
@@ -33,6 +39,7 @@ public class ScriptBola : MonoBehaviour
         direction = new Vector3(0, 0, 1).normalized;
 
         paleta = GameObject.FindGameObjectWithTag("Paleta").transform;
+        paleta.transform.position = new Vector3(0, 0.5f, -4.75f);
     }
 
     // Update is called once per frame
@@ -56,8 +63,20 @@ public class ScriptBola : MonoBehaviour
 
         if (transform.position.z < -5.5f)
         {
-            //Hacer aqui la logica de perder
-            gameRestart();
+            if (godMode)
+            {
+
+            }
+            else
+            {
+                //Hacer aqui la logica de perder
+                gameRestart();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            godMode = !godMode;
         }
     }
 
