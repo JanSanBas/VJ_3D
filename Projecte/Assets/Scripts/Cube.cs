@@ -16,6 +16,7 @@ public class Cube : MonoBehaviour
     {
         // Mantiene la velocidad de caída constante
         rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y*0.97f, rb.velocity.z);
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
     }
 }
 
