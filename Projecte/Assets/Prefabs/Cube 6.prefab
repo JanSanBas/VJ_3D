@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2091182595803158818}
   - component: {fileID: 8054772891960358418}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Cube 6
   m_TagString: Cubo
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 148100491911354795}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.3, y: 0.61, z: -0.03000021}
+  m_LocalPosition: {x: -5.3, y: 0.679, z: -0.03000021}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 13e3f7db968d64e418decf19a0afc343, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
