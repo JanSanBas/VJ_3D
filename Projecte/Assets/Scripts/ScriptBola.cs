@@ -94,6 +94,7 @@ public class ScriptBola : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G))
         {
             godMode = !godMode;
+            updatePaletaCollision();
         }
     }
 
@@ -110,6 +111,22 @@ public class ScriptBola : MonoBehaviour
         if (collision.gameObject.CompareTag("Pared"))
         {
             collisionWithPared(collision);
+        }
+    }
+
+    void updatePaletaCollision()
+    {
+        if (paleta != null)
+        {
+            Collider paletaCollider = paleta.GetComponent<Collider>();
+            if (paletaCollider != null)
+            {
+                Collider bolaCollider = GetComponent<Collider>();
+                if (bolaCollider != null)
+                {
+                    Physics.IgnoreCollision(bolaCollider, paletaCollider, godMode);
+                }
+            }
         }
     }
 
