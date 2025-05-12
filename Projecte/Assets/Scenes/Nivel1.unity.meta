@@ -1,7 +1,13 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Projecte/Assets/Scenes/Nivel1.unity.meta
 guid: 3045076e934dc6c4096a138d2bdec8d4
 DefaultImporter:
+========
+guid: 5d794ca1c5017d2479b56be687ae4fab
+NativeFormatImporter:
+>>>>>>>> origin/develop:Projecte/Assets/Materials/MaterialPared.mat.meta
   externalObjects: {}
+  mainObjectFileID: 2100000
   userData: 
   assetBundleName: 
   assetBundleVariant: 
