@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Cube : MonoBehaviour
+public class ScriptCube : MonoBehaviour
 {
 
     private Rigidbody rb;
@@ -10,6 +10,7 @@ public class Cube : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+      
     }
 
     void Update()
@@ -17,6 +18,7 @@ public class Cube : MonoBehaviour
         // Mantiene la velocidad de caída constante
         rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y*0.97f, rb.velocity.z);
         rb.constraints = RigidbodyConstraints.FreezeRotation;
+        rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
     }
 }
 

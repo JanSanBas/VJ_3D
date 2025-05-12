@@ -22,7 +22,7 @@ public class ScriptBola : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = new Vector3(0, 0.5f, -4f);
+        transform.position = new Vector3(0, 0.68f, -7.74f);
         gameStarted = false;
         godMode = false;
         lastBounceTime = 0f;
@@ -44,7 +44,7 @@ public class ScriptBola : MonoBehaviour
         direction = new Vector3(0, 0, 1).normalized;
 
         paleta = GameObject.FindGameObjectWithTag("Paleta").transform;
-        paleta.transform.position = new Vector3(0, 0.5f, -4.75f);
+        paleta.transform.position = new Vector3(0, 0.68f, -8.5f);
     }
 
     // Update is called once per frame
@@ -66,7 +66,7 @@ public class ScriptBola : MonoBehaviour
             return;
         }
 
-        if (transform.position.z < -4.5f)
+        if (transform.position.z < -9f)
         {
             if (godMode)
             {
@@ -78,7 +78,7 @@ public class ScriptBola : MonoBehaviour
                     direction = Vector3.Reflect(direction, normal).normalized;
 
                     Vector3 pos = transform.position;
-                    pos.z = -4.5f + 0.2f;
+                    pos.z = -9f + 0.2f;
                     transform.position = pos;
 
                     ApplyVelocity();
@@ -111,6 +111,11 @@ public class ScriptBola : MonoBehaviour
         if (collision.gameObject.CompareTag("Pared"))
         {
             collisionWithPared(collision);
+        }
+
+        if (collision.gameObject.CompareTag("Cubo"))
+        {
+            collisionWithCubo(collision);
         }
     }
 
@@ -156,6 +161,15 @@ public class ScriptBola : MonoBehaviour
         direction = Vector3.Reflect(direction, normal).normalized;
 
         ApplyVelocity();
+    }
+
+    void collisionWithCubo(Collision collision)
+    {
+        ContactPoint contact = collision.contacts[0];
+        Vector3 normal = contact.normal;
+        direction = Vector3.Reflect(direction, normal).normalized;
+        ApplyVelocity();
+        Destroy(collision.gameObject);
     }
 
     void gameRestart()

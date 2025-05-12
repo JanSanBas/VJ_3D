@@ -13,9 +13,9 @@ public class ScriptPaleta : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        xMax = 2.5f;
-        xMin = -2.5f;
-        speed = 3f;
+        xMax = 14.41f;
+        xMin = -14.41f;
+        speed = 10f;
     }
 
     // Update is called once per frame
