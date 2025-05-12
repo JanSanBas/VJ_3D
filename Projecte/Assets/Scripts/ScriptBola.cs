@@ -45,6 +45,8 @@ public class ScriptBola : MonoBehaviour
 
         paleta = GameObject.FindGameObjectWithTag("Paleta").transform;
         paleta.transform.position = new Vector3(0, 0.68f, -8.5f);
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        rb.constraints = RigidbodyConstraints.FreezePositionY;
     }
 
     // Update is called once per frame
@@ -96,6 +98,7 @@ public class ScriptBola : MonoBehaviour
             godMode = !godMode;
             updatePaletaCollision();
         }
+
     }
 
     void OnCollisionEnter(Collision collision)

@@ -9,16 +9,17 @@ public class ScriptCube : MonoBehaviour
 
     void Start()
     {
+        
         rb = GetComponent<Rigidbody>();
-      
+        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y * 0.97f, rb.velocity.z);
+        // Bloquea completamente la rotación en X, Y y Z
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        rb.interpolation = RigidbodyInterpolation.None;
     }
 
     void Update()
     {
-        // Mantiene la velocidad de caída constante
-        rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y*0.97f, rb.velocity.z);
-        rb.constraints = RigidbodyConstraints.FreezeRotation;
-        rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+
     }
 }
 
