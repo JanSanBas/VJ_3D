@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Pared
+  - Suelo
+  - Bola
+  - Cubo
   - Paleta
   layers:
   - Default
