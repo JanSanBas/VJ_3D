@@ -169,7 +169,6 @@ public class ScriptBola : MonoBehaviour
         Vector3 normal = contact.normal;
         direction = Vector3.Reflect(direction, normal).normalized;
         ApplyVelocity();
-        Destroy(collision.gameObject);
     }
 
     void gameRestart()

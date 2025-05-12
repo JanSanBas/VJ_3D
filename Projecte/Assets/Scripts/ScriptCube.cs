@@ -20,5 +20,13 @@ public class ScriptCube : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotation;
         rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
     }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Bola"))
+        {
+            //FindObjectOfType<GameManager>().AddScore(1);
+            //Destroy(gameObject);
+        }
+    }
 }
 
