@@ -9,6 +9,7 @@ TagManager:
   - Bola
   - Cubo
   - Paleta
+  - GameManager
   layers:
   - Default
   - TransparentFX

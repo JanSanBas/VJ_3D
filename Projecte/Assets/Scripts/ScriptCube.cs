@@ -6,13 +6,14 @@ public class ScriptCube : MonoBehaviour
 {
 
     private Rigidbody rb;
+    private int puntuacionCubo = 500;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
       
     }
-
+    // Update is called once per frame
     void Update()
     {
         // Mantiene la velocidad de caída constante
@@ -24,9 +25,14 @@ public class ScriptCube : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Bola"))
         {
-            //FindObjectOfType<GameManager>().AddScore(1);
-            //Destroy(gameObject);
+            collisionWithBall();
         }
+    }
+
+    private void collisionWithBall()
+    {
+        GameManager.Instance.addScore(puntuacionCubo);
+        Destroy(gameObject);
     }
 }
 

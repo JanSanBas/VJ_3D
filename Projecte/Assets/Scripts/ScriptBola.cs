@@ -86,8 +86,7 @@ public class ScriptBola : MonoBehaviour
             }
             else
             {
-                //Hacer aqui la logica de perder
-                gameRestart();
+                GameManager.Instance.reduceLives();
             }
         }
 
