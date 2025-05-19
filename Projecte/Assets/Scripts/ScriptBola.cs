@@ -12,7 +12,7 @@ public class ScriptBola : MonoBehaviour
     public float maxBounceAngle = 75f;
 
     private float lastBounceTime;
-    private float bounceCooldown = 0.2f; // Cooldown time in seconds
+    private float bounceCooldown = 0.05f; // Cooldown time in seconds
 
     private Vector3 direction;
     private Rigidbody rb;
@@ -31,7 +31,7 @@ public class ScriptBola : MonoBehaviour
 
         if (rb == null)
         {
-            rb.gameObject.AddComponent<Rigidbody>();
+            rb = gameObject.AddComponent<Rigidbody>();
         }
 
         rb.useGravity = false;
@@ -40,6 +40,7 @@ public class ScriptBola : MonoBehaviour
         rb.velocity = Vector3.zero;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
 
         direction = new Vector3(0, 0, 1).normalized;
 
@@ -66,6 +67,11 @@ public class ScriptBola : MonoBehaviour
             return;
         }
 
+        if (gameStarted && rb.velocity.magnitude != speed)
+        {
+            rb.velocity = rb.velocity.normalized * speed;
+        }
+
         if (transform.position.z < -9f)
         {
             if (godMode)
@@ -86,7 +92,7 @@ public class ScriptBola : MonoBehaviour
             }
             else
             {
-                //Hacer aqui la logica de perder
+                GameManager.Instance.reduceLives();
                 gameRestart();
             }
         }
@@ -108,12 +114,12 @@ public class ScriptBola : MonoBehaviour
             collisionWithPaleta(collision);
         }
 
-        if (collision.gameObject.CompareTag("Pared"))
+        else if (collision.gameObject.CompareTag("Pared"))
         {
             collisionWithPared(collision);
         }
 
-        if (collision.gameObject.CompareTag("Cubo"))
+        else if (collision.gameObject.CompareTag("Cubo"))
         {
             collisionWithCubo(collision);
         }
@@ -165,16 +171,33 @@ public class ScriptBola : MonoBehaviour
 
     void collisionWithCubo(Collision collision)
     {
-        ContactPoint contact = collision.contacts[0];
-        Vector3 normal = contact.normal;
-        direction = Vector3.Reflect(direction, normal).normalized;
-        ApplyVelocity();
-        Destroy(collision.gameObject);
+        if (Time.time - lastBounceTime > bounceCooldown)
+        {
+            if (collision.gameObject == null) return;
+
+            ContactPoint contact = collision.contacts[0];
+            Vector3 normal = contact.normal;
+            direction = Vector3.Reflect(direction, normal).normalized;
+
+            collision.gameObject.GetComponent<ScriptCube>().collisionWithBall();
+
+            ApplyVelocity();
+
+            lastBounceTime = Time.time;
+        }
     }
 
     void gameRestart()
     {
-        Start();
+        gameStarted = false;
+        transform.position = new Vector3(0, 0.68f, -7.74f);
+        rb.velocity = Vector3.zero;
+        if (paleta != null)
+        {
+            paleta.transform.position = new Vector3(0, 0.68f, -8.5f);
+        }
+        direction = new Vector3(0, 0, 1).normalized;
+        ApplyVelocity();
     }
 
     void ApplyVelocity()
