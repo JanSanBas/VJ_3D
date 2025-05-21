@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
-using UnityEditor.PackageManager;
 
 public class GameManager : MonoBehaviour
 {
 
     public static GameManager Instance;
 
-    // Singleton est�tico para datos persistentes
+    // Singleton estatico para datos persistentes
     private static int persistentScore = 0;
     private static int persistentLives = 3;
     private static int persistentLevel = 1;
@@ -162,7 +161,7 @@ public class GameManager : MonoBehaviour
 
     private void determineLevelNum()
     {
-        level = SceneManager.GetActiveScene().buildIndex + 1;
+        level = (SceneManager.GetActiveScene().buildIndex) % 6;
         persistentLevel = level; // Guardar en datos persistentes
         Debug.Log("Nivel actual: " + level + " (basado en buildIndex)");
     }
