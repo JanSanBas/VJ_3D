@@ -10,6 +10,7 @@ public class ScriptCube : MonoBehaviour
 
     void Start()
     {
+
         rb = GetComponent<Rigidbody>();
 
         ApplyConstraints();

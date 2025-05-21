@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance;
 
-    // Singleton estático para datos persistentes
+    // Singleton estï¿½tico para datos persistentes
     private static int persistentScore = 0;
     private static int persistentLives = 3;
     private static int persistentLevel = 1;
@@ -26,9 +26,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI numeroVidasText;
     [SerializeField] private TextMeshProUGUI numeroNivelText;
 
+    // Start is called before the first frame update
     private void Awake()
     {
-
         Instance = this;
 
         // Inicializar si es la primera vez
@@ -54,9 +54,13 @@ public class GameManager : MonoBehaviour
         updateUI();
     }
 
+    // Update is called once per frame
     void Update()
     {
-        // Atajos de teclado para cambiar de nivel
+        if (transform.childCount <= 0)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
         if (Input.GetKeyUp(KeyCode.Alpha1) || Input.GetKeyUp(KeyCode.Keypad1))
         {
             loadScene("Nivel1");
@@ -118,7 +122,7 @@ public class GameManager : MonoBehaviour
 
         if (lives <= 0)
         {
-            // Lógica de Game Over
+            // Lï¿½gica de Game Over
             Debug.Log("Game Over");
         }
         else updateUI();
