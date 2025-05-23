@@ -12,7 +12,7 @@ public class ScriptBola : MonoBehaviour
     public float maxBounceAngle = 75f;
 
     private float lastBounceTime;
-    private float bounceCooldown = 0.05f; // Cooldown time in seconds
+    private float bounceCooldown = 0.03f; // Cooldown time in seconds
 
     private Vector3 direction;
     private Rigidbody rb;
