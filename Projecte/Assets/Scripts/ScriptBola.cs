@@ -160,6 +160,8 @@ public class ScriptBola : MonoBehaviour
         direction = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)).normalized;
 
         ApplyVelocity();
+
+        GameManager.Instance.OnBallHitsPaleta();
     }
 
     void collisionWithPared(Collision collision)
@@ -170,6 +172,8 @@ public class ScriptBola : MonoBehaviour
         direction = Vector3.Reflect(direction, normal).normalized;
 
         ApplyVelocity();
+
+        GameManager.Instance.OnBallHitsPaleta();
     }
 
     void collisionWithCubo(Collision collision)

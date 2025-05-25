@@ -8,7 +8,7 @@ public class ScriptCreditos : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Invoke("WaitToEnd", 6f);
+        Invoke("WaitToEnd", 8f);
     }
 
     public void WaitToEnd()

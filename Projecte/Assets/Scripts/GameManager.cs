@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public AudioSource destroyCube;
+    public AudioSource fail;
+    public AudioSource hitPaleta;
 
     public static GameManager Instance;
 
@@ -84,6 +87,7 @@ public class GameManager : MonoBehaviour
 
     public void addScore(int points)
     {
+        destroyCube.Play(); // Reproducir sonido al sumar puntos
         score += points;
         persistentScore = score; // Guardar en datos persistentes
         updateUI();
@@ -116,6 +120,7 @@ public class GameManager : MonoBehaviour
 
     public void reduceLives()
     {
+        fail.Play(); // Reproducir sonido al perder una vida
         lives--;
         persistentLives = lives; // Guardar en datos persistentes
 
@@ -165,4 +170,10 @@ public class GameManager : MonoBehaviour
         persistentLevel = level; // Guardar en datos persistentes
         Debug.Log("Nivel actual: " + level + " (basado en buildIndex)");
     }
+
+    public void OnBallHitsPaleta()
+    {
+        hitPaleta.Play(); // Reproducir sonido al golpear la paleta
+    }
+
 }

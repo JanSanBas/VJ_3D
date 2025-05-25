@@ -5,10 +5,23 @@ using UnityEngine.SceneManagement;
 
 public class ScriptMenu : MonoBehaviour
 {
+
+    public AudioSource clickSound;
+
     // Start is called before the first frame update
     public void Jugar()
     {
-        SceneManager.LoadScene("Nivel1", LoadSceneMode.Single);
+        StartCoroutine(PlaySoundAndLoadScene("Nivel1"));
+    }
+
+    private IEnumerator PlaySoundAndLoadScene(string sceneName)
+    {
+        if (clickSound != null)
+            clickSound.Play();
+
+        yield return new WaitForSeconds(clickSound.clip.length);
+
+        SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
 
     // Update is called once per frame
