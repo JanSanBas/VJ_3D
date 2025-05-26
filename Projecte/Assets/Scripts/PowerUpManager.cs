@@ -8,24 +8,42 @@ public class PowerUpManager : MonoBehaviour
 {
     public static PowerUpManager Instance;
 
+    // Nuevo: Clase Serializable para las probabilidades de Power-Up
+    [System.Serializable]
+    public class PowerUpDropChance
+    {
+        public PowerUpType type;
+        [Range(0f, 1f)] // Asegura que el valor esté entre 0 y 1
+        public float chance;
+    }
+
     [Header("Power-Up General Settings")]
     [SerializeField] private GameObject powerUpPrefab;
-    [SerializeField] private float dropChance = 0.3f; // 30% de probabilidad
+    [SerializeField] private float dropChance = 0.3f; // Probabilidad general de que *cualquier* power-up dropee
     [SerializeField] private float powerUpSpeed = 2f;
-    [SerializeField] private float powerUpDuration = 10f; // Duración general para power-ups temporales (PowerBall, Paddle Scale)
+    [SerializeField] private float powerUpDuration = 10f;
+
+    [Header("Individual Power-Up Drop Chances")]
+    [SerializeField] private List<PowerUpDropChance> individualDropChances; // Lista de probabilidades individuales
 
     [Header("PowerBall Settings")]
     [SerializeField] private Material powerBallMaterial;
     [SerializeField] private Material normalBallMaterial;
 
     [Header("Paddle Scale Settings")]
-    [SerializeField] private float bigPaddleScale = 1.5f; // Factor de escala para paleta grande
-    [SerializeField] private float smallPaddleScale = 0.5f; // Factor de escala para paleta pequeña
+    [SerializeField] private float bigPaddleScale = 1.5f;
+    [SerializeField] private float smallPaddleScale = 0.5f;
 
-    [Header("Magnet Power-Up Settings")] // Nuevas configuraciones para el imán
-    [SerializeField] private int maxMagnetUses = 5; // Número máximo de veces que la bola se puede enganchar
+    [Header("Magnet Power-Up Settings")]
+    [SerializeField] private int maxMagnetUses = 5;
 
-    // Estados de power-ups activos y sus coroutines
+    [Header("God Mode Settings")]
+    [SerializeField] private float godModeDuration = 5f;
+
+    private bool hasNextLevelPowerUpBeenDroppedThisLevel = false;
+    [SerializeField] private float nextLevelDropChance = 0.1f; // Probabilidad específica para NextLevel
+
+    // --- Variables de estado y coroutines (reducidas para God Mode) ---
     private bool isPowerBallActive = false;
     private Coroutine powerBallCoroutine;
 
@@ -35,10 +53,10 @@ public class PowerUpManager : MonoBehaviour
     private bool isSmallPaddleActive = false;
     private Coroutine smallPaddleCoroutine;
 
-    private bool isMagnetActive = false; // Estado del imán
-    private int currentMagnetUses; // Usos restantes del imán
+    private bool isMagnetActive = false;
+    private int currentMagnetUses;
 
-    private ScriptBola ballScript; // Referencia a la bola principal
+    private ScriptBola ballScript;
     private ScriptPaleta paddleScript;
 
     private void Awake()
@@ -55,11 +73,14 @@ public class PowerUpManager : MonoBehaviour
 
     private void Start()
     {
-        // Obtener referencia a la bola principal y la paleta
         GameObject ball = GameObject.FindGameObjectWithTag("Bola");
         if (ball != null)
         {
             ballScript = ball.GetComponent<ScriptBola>();
+        }
+        else
+        {
+            Debug.LogError("Bola no encontrada. Asegúrate de que tenga el tag 'Bola'.");
         }
 
         GameObject paddle = GameObject.FindGameObjectWithTag("Paleta");
@@ -67,25 +88,74 @@ public class PowerUpManager : MonoBehaviour
         {
             paddleScript = paddle.GetComponent<ScriptPaleta>();
         }
+        else
+        {
+            Debug.LogError("Paleta no encontrada. Asegúrate de que tenga el tag 'Paleta'.");
+        }
+        hasNextLevelPowerUpBeenDroppedThisLevel = false;
     }
 
     public void TryDropPowerUp(Vector3 position)
     {
-        if (Random.Range(0f, 1f) <= dropChance)
+        // Lógica para el Power-Up Next Level (prioritaria si se cumplen las condiciones)
+        if (GameManager.Instance != null && GameManager.Instance.CanDropNextLevelPowerUp() && !hasNextLevelPowerUpBeenDroppedThisLevel)
         {
-            DropPowerUp(position);
+            if (Random.Range(0f, 1f) <= nextLevelDropChance)
+            {
+                DropPowerUp(position, PowerUpType.NextLevel);
+                hasNextLevelPowerUpBeenDroppedThisLevel = true;
+                Debug.Log("¡Power-up Next Level dropeado!");
+                return;
+            }
+        }
+
+        // Lógica para otros Power-Ups
+        if (Random.Range(0f, 1f) <= dropChance) // Probabilidad general de que *algo* dropee
+        {
+            // Filtrar los power-ups normales (excluir NextLevel de esta selección)
+            List<PowerUpDropChance> normalPowerUps = new List<PowerUpDropChance>();
+            foreach (var item in individualDropChances)
+            {
+                if (item.type != PowerUpType.NextLevel)
+                {
+                    normalPowerUps.Add(item);
+                }
+            }
+
+            // Calcular el total de las "chances" para la normalización
+            float totalChance = 0f;
+            foreach (var item in normalPowerUps)
+            {
+                totalChance += item.chance;
+            }
+
+            // Si no hay power-ups normales definidos o su suma es 0, no dropear nada
+            if (normalPowerUps.Count == 0 || totalChance == 0f)
+            {
+                return;
+            }
+
+            // Seleccionar un Power-Up basado en las probabilidades individuales
+            float randomValue = Random.Range(0f, totalChance);
+            float cumulativeChance = 0f;
+
+            foreach (var item in normalPowerUps)
+            {
+                cumulativeChance += item.chance;
+                if (randomValue <= cumulativeChance)
+                {
+                    DropPowerUp(position, item.type);
+                    return;
+                }
+            }
         }
     }
 
-    private void DropPowerUp(Vector3 position)
+    private void DropPowerUp(Vector3 position, PowerUpType type)
     {
         if (powerUpPrefab != null)
         {
             GameObject powerUp = Instantiate(powerUpPrefab, position, Quaternion.identity);
-
-            // Asignar tipo de power-up aleatoriamente entre los tipos disponibles
-            PowerUpType[] availablePowerUpTypes = { PowerUpType.PowerBall, PowerUpType.BigPaddle, PowerUpType.SmallPaddle, PowerUpType.NormalBall, PowerUpType.Magnet };
-            PowerUpType type = availablePowerUpTypes[Random.Range(0, availablePowerUpTypes.Length)];
 
             PowerUpItem powerUpItem = powerUp.GetComponent<PowerUpItem>();
             if (powerUpItem != null)
@@ -114,6 +184,15 @@ public class PowerUpManager : MonoBehaviour
             case PowerUpType.Magnet:
                 ActivateMagnet();
                 break;
+            case PowerUpType.ExtraLife:
+                ActivateExtraLife();
+                break;
+            case PowerUpType.NextLevel:
+                ActivateNextLevel();
+                break;
+            case PowerUpType.GodMode:
+                ActivateGodMode();
+                break;
         }
     }
 
@@ -122,7 +201,6 @@ public class PowerUpManager : MonoBehaviour
     {
         if (isPowerBallActive)
         {
-            // Si ya está activo, reinicia la duración
             if (powerBallCoroutine != null) StopCoroutine(powerBallCoroutine);
             powerBallCoroutine = StartCoroutine(DeactivatePowerBallAfterTime());
             Debug.Log("PowerBall duración reiniciada!");
@@ -132,8 +210,8 @@ public class PowerUpManager : MonoBehaviour
         isPowerBallActive = true;
         if (ballScript != null)
         {
-            ballScript.SetPowerBall(true); // Informar a la bola que PowerBall está activo
-            ballScript.GetComponent<Renderer>().material = powerBallMaterial; // Cambiar material
+            ballScript.SetPowerBall(true);
+            ballScript.GetComponent<Renderer>().material = powerBallMaterial;
         }
 
         powerBallCoroutine = StartCoroutine(DeactivatePowerBallAfterTime());
@@ -153,8 +231,8 @@ public class PowerUpManager : MonoBehaviour
         isPowerBallActive = false;
         if (ballScript != null)
         {
-            ballScript.SetPowerBall(false); // Informar a la bola que PowerBall se desactiva
-            ballScript.GetComponent<Renderer>().material = normalBallMaterial; // Volver al material normal
+            ballScript.SetPowerBall(false);
+            ballScript.GetComponent<Renderer>().material = normalBallMaterial;
         }
         Debug.Log("PowerBall desactivado!");
     }
@@ -162,10 +240,9 @@ public class PowerUpManager : MonoBehaviour
     // --- Big Paddle Logic ---
     private void ActivateBigPaddle()
     {
-        if (isSmallPaddleActive) DeactivateSmallPaddle(); // Desactivar pequeño si grande se activa
+        if (isSmallPaddleActive) DeactivateSmallPaddle();
         if (isBigPaddleActive)
         {
-            // Si ya está activo, reinicia la duración
             if (bigPaddleCoroutine != null) StopCoroutine(bigPaddleCoroutine);
             bigPaddleCoroutine = StartCoroutine(DeactivateBigPaddleAfterTime());
             Debug.Log("Big Paddle duración reiniciada!");
@@ -204,10 +281,9 @@ public class PowerUpManager : MonoBehaviour
     // --- Small Paddle Logic ---
     private void ActivateSmallPaddle()
     {
-        if (isBigPaddleActive) DeactivateBigPaddle(); // Desactivar grande si pequeño se activa
+        if (isBigPaddleActive) DeactivateBigPaddle();
         if (isSmallPaddleActive)
         {
-            // Si ya está activo, reinicia la duración
             if (smallPaddleCoroutine != null) StopCoroutine(smallPaddleCoroutine);
             smallPaddleCoroutine = StartCoroutine(DeactivateSmallPaddleAfterTime());
             Debug.Log("Small Paddle duración reiniciada!");
@@ -248,7 +324,7 @@ public class PowerUpManager : MonoBehaviour
     {
         if (isPowerBallActive)
         {
-            DeactivatePowerBall(); // Desactiva PowerBall, lo que restablece el material a normalBallMaterial
+            DeactivatePowerBall();
             Debug.Log("Normal Ball activado (PowerBall desactivado)!");
         }
         else
@@ -260,27 +336,24 @@ public class PowerUpManager : MonoBehaviour
     // --- Magnet Logic ---
     private void ActivateMagnet()
     {
-        if (!isMagnetActive) // Activar solo si no está ya activo
+        if (!isMagnetActive)
         {
             isMagnetActive = true;
-            currentMagnetUses = maxMagnetUses; // Resetear usos al activar
+            currentMagnetUses = maxMagnetUses;
             Debug.Log($"Magnet activado! Usos restantes: {currentMagnetUses}");
 
             if (ballScript != null)
             {
-                ballScript.SetMagnetPowerUp(true); // Informar a la bola que el imán está activo
+                ballScript.SetMagnetPowerUp(true);
             }
         }
         else
         {
-            // Si ya está activo, puedes optar por reiniciar los usos o sumarlos.
-            // Aquí, lo reiniciaremos para que el jugador siempre obtenga el máximo de usos.
             currentMagnetUses = maxMagnetUses;
             Debug.Log($"Magnet ya estaba activo, usos reiniciados: {currentMagnetUses}");
         }
     }
 
-    // Método para que la bola informe que usó un enganche del imán
     public void UseMagnetCharge()
     {
         if (isMagnetActive)
@@ -296,15 +369,44 @@ public class PowerUpManager : MonoBehaviour
 
     public void DeactivateMagnet()
     {
-        if (!isMagnetActive) return; // Ya está desactivado
+        if (!isMagnetActive) return;
 
         isMagnetActive = false;
         if (ballScript != null)
         {
-            ballScript.SetMagnetPowerUp(false); // Informar a la bola que el imán se desactivó
-            ballScript.ReleaseBall(); // Asegurarse de liberar la bola si está enganchada
+            ballScript.SetMagnetPowerUp(false);
+            ballScript.ReleaseBall();
         }
         Debug.Log("Magnet desactivado!");
+    }
+
+    // --- Extra Life Logic ---
+    private void ActivateExtraLife()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.addLife();
+            Debug.Log("¡Power-up de vida extra activado!");
+        }
+    }
+
+    // --- Next Level Logic ---
+    private void ActivateNextLevel()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.GoToNextLevel();
+            Debug.Log("¡Power-up Next Level activado!");
+        }
+    }
+
+    // --- God Mode Logic (simplificado) ---
+    private void ActivateGodMode()
+    {
+        if (ballScript != null)
+        {
+            ballScript.ActivateGodMode(godModeDuration);
+        }
     }
 
     public bool IsPowerBallActive()
@@ -312,12 +414,16 @@ public class PowerUpManager : MonoBehaviour
         return isPowerBallActive;
     }
 
-    public bool IsMagnetActive() // Nuevo método para que otros scripts consulten el estado del imán
+    public bool IsMagnetActive()
     {
         return isMagnetActive;
     }
 
-    // Método para reiniciar power-ups cuando se reinicia el juego (importante para vidas)
+    public bool HasNextLevelPowerUpBeenDropped()
+    {
+        return hasNextLevelPowerUpBeenDroppedThisLevel;
+    }
+
     public void ResetPowerUps()
     {
         if (powerBallCoroutine != null) StopCoroutine(powerBallCoroutine);
@@ -329,7 +435,9 @@ public class PowerUpManager : MonoBehaviour
         if (smallPaddleCoroutine != null) StopCoroutine(smallPaddleCoroutine);
         DeactivateSmallPaddle();
 
-        DeactivateMagnet(); // Asegurarse de desactivar el imán también
+        DeactivateMagnet();
+
+        hasNextLevelPowerUpBeenDroppedThisLevel = false;
     }
 }
 
@@ -339,5 +447,8 @@ public enum PowerUpType
     BigPaddle,
     SmallPaddle,
     NormalBall,
-    Magnet // ¡Nuevo tipo!
+    Magnet,
+    ExtraLife,
+    NextLevel,
+    GodMode
 }

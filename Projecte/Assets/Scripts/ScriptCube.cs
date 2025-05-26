@@ -49,11 +49,20 @@ public class ScriptCube : MonoBehaviour
         GameManager.Instance.addScore(puntuacionCubo);
 
         // Intentar dropear power-up antes de destruir
+        // PowerUpManager decidirá si puede dropear el Next Level basado en el conteo de cubos del GameManager
         if (PowerUpManager.Instance != null)
         {
             PowerUpManager.Instance.TryDropPowerUp(transform.position);
         }
 
-        Destroy(gameObject, 0.01f);
+        Destroy(gameObject);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Bola"))
+        {
+            collisionWithBall();
+        }
     }
 }

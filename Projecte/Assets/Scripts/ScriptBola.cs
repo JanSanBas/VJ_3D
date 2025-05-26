@@ -30,6 +30,8 @@ public class ScriptBola : MonoBehaviour
     private bool isReleasing = false; // Nuevo: indica si la bola está en proceso de liberación
     [SerializeField] private float releaseImmunityDuration = 0.1f; // Nuevo: tiempo que ignora colisiones con la paleta al liberarse
 
+    [SerializeField] private Coroutine godModeDuration;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -339,5 +341,26 @@ public class ScriptBola : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ActivateGodMode(float duration)
+    {
+        if (godModeDuration != null)
+        {
+            StopCoroutine(godModeDuration);
+        }
+        godMode = true;
+        updatePaletaCollision();
+        godModeDuration = StartCoroutine(GodModeDurationRoutine(duration));
+    }
+
+    private IEnumerator GodModeDurationRoutine(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        godMode = false;
+        updatePaletaCollision();
+        godModeDuration = null; // Resetear la referencia de la coroutine
+
+        Debug.Log("God Mode desactivado.");
     }
 }

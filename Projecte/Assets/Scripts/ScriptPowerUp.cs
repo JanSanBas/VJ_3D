@@ -46,8 +46,17 @@ public class PowerUpItem : MonoBehaviour
                 case PowerUpType.NormalBall:
                     renderer.material.color = Color.cyan;
                     break;
-                case PowerUpType.Magnet: // ¡Nuevo caso!
-                    renderer.material.color = Color.yellow; // Un color para el imán
+                case PowerUpType.Magnet:
+                    renderer.material.color = Color.yellow;
+                    break;
+                case PowerUpType.ExtraLife:
+                    renderer.material.color = Color.magenta;
+                    break;
+                case PowerUpType.NextLevel:
+                    renderer.material.color = Color.black;
+                    break;
+                case PowerUpType.GodMode: // ¡Nuevo caso!
+                    renderer.material.color = new Color(1f, 0.5f, 0f); // Naranja o Dorado
                     break;
             }
         }
@@ -69,8 +78,17 @@ public class PowerUpItem : MonoBehaviour
                 case PowerUpType.NormalBall:
                     textMesh.text = "N";
                     break;
-                case PowerUpType.Magnet: // ¡Nuevo caso!
-                    textMesh.text = "M"; // 'M' de Magnet
+                case PowerUpType.Magnet:
+                    textMesh.text = "M";
+                    break;
+                case PowerUpType.ExtraLife:
+                    textMesh.text = "+1";
+                    break;
+                case PowerUpType.NextLevel:
+                    textMesh.text = "NL";
+                    break;
+                case PowerUpType.GodMode: // ¡Nuevo caso!
+                    textMesh.text = "GM"; // Texto para God Mode
                     break;
             }
         }

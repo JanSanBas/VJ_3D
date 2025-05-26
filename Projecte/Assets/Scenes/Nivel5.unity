@@ -32955,14 +32955,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   powerUpPrefab: {fileID: 1186215682}
-  dropChance: 0.4
+  dropChance: 0.1
   powerUpSpeed: 2
   powerUpDuration: 100
+  individualDropChances:
+  - type: 0
+    chance: 0.2
+  - type: 1
+    chance: 0.2
+  - type: 2
+    chance: 0.1
+  - type: 3
+    chance: 0.15
+  - type: 4
+    chance: 0.15
+  - type: 5
+    chance: 0.1
+  - type: 7
+    chance: 0.05
   powerBallMaterial: {fileID: 2100000, guid: b0cd5b9e9296eab48ba72a10fddc3de4, type: 2}
   normalBallMaterial: {fileID: 2100000, guid: d1a7a11703b15554eb1e09a94ce6a47d, type: 2}
   bigPaddleScale: 1.5
   smallPaddleScale: 0.5
   maxMagnetUses: 5
+  godModeDuration: 5
+  nextLevelDropChance: 0.1
 --- !u!1001 &1942985181
 PrefabInstance:
   m_ObjectHideFlags: 0
