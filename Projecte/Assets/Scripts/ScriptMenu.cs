@@ -1,14 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
+using TMPro; // Asegúrate de usar esto si usas TextMeshPro
 
 public class ScriptMenu : MonoBehaviour
 {
-
+    [Header("Audio")]
     public AudioSource clickSound;
+    public AudioSource hoverSound;
 
-    // Start is called before the first frame update
+    [Header("UI")]
+    [SerializeField] private TextMeshProUGUI highScoreText;
+
+    void Start()
+    {
+        // Leer la puntuación máxima desde PlayerPrefs
+        int highScore = PlayerPrefs.GetInt("HighScore", 0);
+
+        if (highScoreText != null)
+        {
+            highScoreText.text = "Puntuacion Maxima: " + highScore;
+        }
+    }
+
     public void Jugar()
     {
         StartCoroutine(PlaySoundAndLoadScene("Nivel1"));
@@ -24,9 +39,24 @@ public class ScriptMenu : MonoBehaviour
         SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
 
-    // Update is called once per frame
     public void Sortir()
     {
         Application.Quit();
     }
+
+    public void OnPointerEnter()
+    {
+        if (hoverSound != null)
+            hoverSound.Play();
+    }
+
+    public void ResetHighScore()
+    {
+        PlayerPrefs.DeleteKey("HighScore");
+        PlayerPrefs.Save();
+
+        if (highScoreText != null)
+            highScoreText.text = "Puntuacion Maxima: 0";
+    }
+
 }

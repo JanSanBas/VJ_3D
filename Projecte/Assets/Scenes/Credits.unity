@@ -812,8 +812,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\xA1GRACIAS POR JUGAR!\n\n\n\n\n\n\nJulen Guevara\nJan Santos"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 674d6cf18c14f3d4aae1c84609767b39, type: 2}
+  m_sharedMaterial: {fileID: -1172042951837935303, guid: 674d6cf18c14f3d4aae1c84609767b39, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -837,8 +837,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 93.85
-  m_fontSizeBase: 93.85
+  m_fontSize: 84.34
+  m_fontSizeBase: 84.34
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
