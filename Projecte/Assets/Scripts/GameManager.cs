@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
     {
         if (transform.childCount <= 0)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Carga el siguiente nivel cuando no hay cubos
         }
         if (Input.GetKeyUp(KeyCode.Alpha1) || Input.GetKeyUp(KeyCode.Keypad1))
         {
@@ -121,8 +121,10 @@ public class GameManager : MonoBehaviour
 
         if (lives <= 0)
         {
-            // L�gica de Game Over
+            // Lógica de Game Over
             Debug.Log("Game Over");
+            // Puedes cargar una escena de Game Over o reiniciar el juego
+            // SceneManager.LoadScene("GameOverScene"); // Ejemplo: cargar una escena de Game Over
         }
         else updateUI();
     }

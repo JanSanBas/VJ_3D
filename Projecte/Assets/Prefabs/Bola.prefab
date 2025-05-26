@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: d1a7a11703b15554eb1e09a94ce6a47d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -123,6 +123,7 @@ MonoBehaviour:
   godMode: 0
   speed: 10
   maxBounceAngle: 75
+  releaseImmunityDuration: 0.1
 --- !u!54 &3901639526310455273
 Rigidbody:
   m_ObjectHideFlags: 0

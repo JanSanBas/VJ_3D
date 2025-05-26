@@ -10,6 +10,7 @@ TagManager:
   - Cubo
   - Paleta
   - GameManager
+  - PowerUp
   layers:
   - Default
   - TransparentFX

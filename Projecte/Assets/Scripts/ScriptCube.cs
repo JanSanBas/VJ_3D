@@ -10,9 +10,7 @@ public class ScriptCube : MonoBehaviour
 
     void Start()
     {
-
         rb = GetComponent<Rigidbody>();
-
         ApplyConstraints();
     }
 
@@ -46,10 +44,16 @@ public class ScriptCube : MonoBehaviour
         }
     }
 
-   public void collisionWithBall()
+    public void collisionWithBall()
     {
         GameManager.Instance.addScore(puntuacionCubo);
 
-        Destroy(gameObject,0.01f);
+        // Intentar dropear power-up antes de destruir
+        if (PowerUpManager.Instance != null)
+        {
+            PowerUpManager.Instance.TryDropPowerUp(transform.position);
+        }
+
+        Destroy(gameObject, 0.01f);
     }
 }

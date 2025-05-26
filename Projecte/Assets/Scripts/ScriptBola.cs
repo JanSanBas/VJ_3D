@@ -19,6 +19,17 @@ public class ScriptBola : MonoBehaviour
 
     private Transform paleta;
 
+    private bool isPowerBallActive = false; // Estado del PowerBall en la bola
+
+    // --- Nuevas variables para el imán ---
+    private bool isMagnetPowerUpActive = false;
+    private bool isBallAttached = false;
+    private Vector3 offsetFromPaddle;
+
+    // --- Nuevas variables para la liberación controlada ---
+    private bool isReleasing = false; // Nuevo: indica si la bola está en proceso de liberación
+    [SerializeField] private float releaseImmunityDuration = 0.1f; // Nuevo: tiempo que ignora colisiones con la paleta al liberarse
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,35 +54,41 @@ public class ScriptBola : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
 
         direction = new Vector3(0, 0, 1).normalized;
+        // ApplyVelocity(); // La velocidad se aplica solo cuando el juego empieza
 
-        paleta = GameObject.FindGameObjectWithTag("Paleta").transform;
-        paleta.transform.position = new Vector3(0, 0.68f, -8.5f);
-        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-        rb.constraints = RigidbodyConstraints.FreezePositionY;
+        GameObject paddleObj = GameObject.FindGameObjectWithTag("Paleta");
+        if (paddleObj != null)
+        {
+            paleta = paddleObj.transform;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        // Si el juego no ha empezado, la bola se mueve con la paleta
         if (!gameStarted)
         {
-            if (Input.GetKeyUp(KeyCode.Space))
+            if (paleta != null)
+            {
+                transform.position = new Vector3(paleta.position.x, transform.position.y, paleta.position.z + 0.76f);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
             {
                 gameStarted = true;
                 ApplyVelocity();
             }
-
-            if (paleta != null)
-            {
-                Vector3 posPaleta = paleta.position;
-                transform.position = new Vector3(posPaleta.x, transform.position.y, posPaleta.z + 0.75f);
-            }
-            return;
         }
-
-        if (gameStarted && rb.velocity.magnitude != speed)
+        else if (isBallAttached) // Si la bola está enganchada por el imán
         {
-            rb.velocity = rb.velocity.normalized * speed;
+            transform.position = paleta.position + offsetFromPaddle;
+            rb.velocity = Vector3.zero; // Asegurar que no se mueva por su cuenta
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                ReleaseBall(); // Liberar la bola
+            }
         }
 
         if (transform.position.z < -9f)
@@ -94,8 +111,8 @@ public class ScriptBola : MonoBehaviour
             }
             else
             {
-                GameManager.Instance.reduceLives();
-                gameRestart();
+                GameManager.Instance.reduceLives(); // Llama al GameManager para reducir una vida
+                gameRestart(); // Reinicia la posición de la bola para la siguiente vida
             }
         }
 
@@ -104,28 +121,208 @@ public class ScriptBola : MonoBehaviour
             godMode = !godMode;
             updatePaletaCollision();
         }
+    }
 
+    void ApplyVelocity()
+    {
+        rb.velocity = direction * speed;
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        if (gameStarted == false)
-            return;
-
-        if (collision.gameObject.CompareTag("Paleta"))
+        // Si la bola está en proceso de liberación y colisiona con la paleta, ignorar
+        if (isReleasing && collision.gameObject.CompareTag("Paleta"))
         {
-            collisionWithPaleta(collision);
+            return;
         }
 
-        else if (collision.gameObject.CompareTag("Pared"))
+        if (Time.time - lastBounceTime < bounceCooldown)
+        {
+            return;
+        }
+
+        if (collision.gameObject.CompareTag("Pared"))
         {
             collisionWithPared(collision);
         }
-
         else if (collision.gameObject.CompareTag("Cubo"))
         {
             collisionWithCubo(collision);
         }
+        else if (collision.gameObject.CompareTag("Paleta"))
+        {
+            collisionWithPaleta(collision);
+        }
+    }
+
+    void collisionWithPaleta(Collision collision)
+    {
+        // Si el imán está activo y la bola no está ya enganchada, engancharla
+        if (isMagnetPowerUpActive && !isBallAttached)
+        {
+            AttachBall(collision);
+            PowerUpManager.Instance.UseMagnetCharge(); // Notificar al PowerUpManager que se usó una carga
+            return;
+        }
+
+        ContactPoint contact = collision.contacts[0];
+        Vector3 paddleCenter = collision.gameObject.transform.position;
+
+        float hitPointX = contact.point.x - paddleCenter.x;
+        float paddleWidth = collision.collider.bounds.size.x;
+        float normalizedHitPointX = hitPointX / (paddleWidth / 2f);
+
+        float bounceAngle = normalizedHitPointX * maxBounceAngle;
+
+        direction = Quaternion.Euler(0, 0, bounceAngle) * Vector3.forward;
+
+        if (direction.z < 0) direction.z *= -1;
+
+        direction.Normalize();
+
+        ApplyVelocity();
+        lastBounceTime = Time.time;
+    }
+
+    void collisionWithPared(Collision collision)
+    {
+        ContactPoint contact = collision.contacts[0];
+        Vector3 normal = contact.normal;
+
+        direction = Vector3.Reflect(direction, normal).normalized;
+
+        if (Mathf.Abs(direction.z) < 0.1f)
+        {
+            if (direction.z >= 0)
+            {
+                direction = new Vector3(direction.x, direction.y, 0.1f).normalized;
+            }
+            else
+            {
+                direction = new Vector3(direction.x, direction.y, -0.1f).normalized;
+            }
+        }
+
+        ApplyVelocity();
+        lastBounceTime = Time.time;
+    }
+
+    void collisionWithCubo(Collision collision)
+    {
+        if (Time.time - lastBounceTime > bounceCooldown)
+        {
+            if (collision.gameObject == null) return;
+
+            ScriptCube cubeScript = collision.gameObject.GetComponent<ScriptCube>();
+            if (cubeScript != null)
+            {
+                cubeScript.collisionWithBall();
+            }
+
+            if (!isPowerBallActive) // Si PowerBall NO está activo, la bola rebota.
+            {
+                ContactPoint contact = collision.contacts[0];
+                Vector3 normal = contact.normal;
+                direction = Vector3.Reflect(direction, normal).normalized;
+
+                float randomAngleOffset = Random.Range(-5f, 5f);
+                direction = Quaternion.Euler(0, randomAngleOffset, 0) * direction;
+                direction.Normalize();
+            }
+            // Si isPowerBallActive es true, la bola no rebota, simplemente destruye el cubo.
+
+            ApplyVelocity();
+            lastBounceTime = Time.time;
+        }
+    }
+
+    public void SetPowerBall(bool active)
+    {
+        isPowerBallActive = active;
+    }
+
+    public void SetMagnetPowerUp(bool active) // Método para establecer el estado del imán
+    {
+        isMagnetPowerUpActive = active;
+        if (!active && isBallAttached) // Si el imán se desactiva y la bola está enganchada, liberarla
+        {
+            ReleaseBall();
+        }
+    }
+
+    private void AttachBall(Collision collision) // Lógica para enganchar la bola
+    {
+        isBallAttached = true;
+        rb.isKinematic = true; // Desactivar física para que no se mueva
+        rb.velocity = Vector3.zero; // Asegurarse de que se detiene
+
+        // Calcular el offset para mantener la posición relativa a la paleta
+        offsetFromPaddle = transform.position - paleta.position;
+
+        Debug.Log("Bola enganchada a la paleta!");
+    }
+
+    public void ReleaseBall() // Lógica para liberar la bola
+    {
+        if (!isBallAttached) return; // Si no está enganchada, no hacer nada
+
+        isBallAttached = false;
+        rb.isKinematic = false; // Reactivar física
+
+        // Iniciar el período de inmunidad
+        StartCoroutine(ReleaseImmunityRoutine());
+
+        // La dirección de liberación puede ser un poco más dinámica.
+        // Podrías usar el movimiento de la paleta, o simplemente el centro de la paleta.
+        // Aquí vamos a usar la lógica de rebote de la paleta para darle una dirección inicial.
+        // Para esto necesitamos simular los puntos de contacto, o hacer un rebote simple hacia arriba.
+        // Para un inicio consistente, usaremos una dirección ligeramente aleatoria o basada en la posición actual en la paleta.
+
+        // Opción 2: Usar la lógica de rebote de la paleta (más realista)
+        // Necesitamos calcular el punto de impacto como si acabara de chocar.
+        // Una aproximación simple es usar la posición x relativa de la bola sobre la paleta.
+        float hitPointX = transform.position.x - paleta.position.x;
+        float paddleWidth = paleta.GetComponent<Collider>().bounds.size.x; // Asume que la paleta tiene un collider
+        float normalizedHitPointX = hitPointX / (paddleWidth / 2f);
+        float bounceAngle = normalizedHitPointX * maxBounceAngle;
+
+        direction = Quaternion.Euler(0, 0, bounceAngle) * Vector3.forward;
+        if (direction.z < 0) direction.z *= -1; // Asegura que vaya hacia arriba
+        direction.Normalize();
+
+        ApplyVelocity();
+        Debug.Log("Bola liberada!");
+    }
+
+    private IEnumerator ReleaseImmunityRoutine() // Coroutine para inmunidad tras liberación
+    {
+        isReleasing = true;
+        yield return new WaitForSeconds(releaseImmunityDuration);
+        isReleasing = false;
+    }
+
+    void gameRestart()
+    {
+        gameStarted = false;
+        godMode = false;
+        isPowerBallActive = false;
+        isMagnetPowerUpActive = false; // Asegurarse de que el imán se desactiva en la bola
+        isBallAttached = false; // Asegurarse de que no esté enganchada
+        rb.isKinematic = false; // Reactivar la física si estaba desactivada
+
+        // Asegurarse de que el estado de liberación también se resetee
+        isReleasing = false;
+        StopAllCoroutines(); // Detener coroutines pendientes (como ReleaseImmunityRoutine)
+
+
+        transform.position = new Vector3(0, 0.68f, -7.74f);
+        rb.velocity = Vector3.zero;
+        if (paleta != null)
+        {
+            paleta.transform.position = new Vector3(0, 0.68f, -8.5f);
+        }
+        direction = new Vector3(0, 0, 1).normalized;
+        ApplyVelocity();
     }
 
     void updatePaletaCollision()
@@ -142,69 +339,5 @@ public class ScriptBola : MonoBehaviour
                 }
             }
         }
-    }
-
-    void collisionWithPaleta(Collision collision)
-    {
-        ContactPoint contact = collision.contacts[0];
-        Vector3 posPaleta = collision.transform.position;
-        Vector3 contactPoint = contact.point;
-
-        float medidaPaleta = collision.collider.bounds.size.x;
-        float distAlMedio = contactPoint.x - posPaleta.x;
-
-        float distanciaNormalizada = Mathf.Clamp((distAlMedio / (medidaPaleta / 2f)), -1f, 1f);
-
-        float angle = (distanciaNormalizada * maxBounceAngle) * Mathf.Deg2Rad;
-
-        direction = new Vector3(Mathf.Sin(angle), 0, Mathf.Cos(angle)).normalized;
-
-        ApplyVelocity();
-    }
-
-    void collisionWithPared(Collision collision)
-    {
-        ContactPoint contact = collision.contacts[0];
-        Vector3 normal = contact.normal;
-
-        direction = Vector3.Reflect(direction, normal).normalized;
-
-        ApplyVelocity();
-    }
-
-    void collisionWithCubo(Collision collision)
-    {
-        if (Time.time - lastBounceTime > bounceCooldown)
-        {
-            if (collision.gameObject == null) return;
-
-            ContactPoint contact = collision.contacts[0];
-            Vector3 normal = contact.normal;
-            direction = Vector3.Reflect(direction, normal).normalized;
-
-            collision.gameObject.GetComponent<ScriptCube>().collisionWithBall();
-
-            ApplyVelocity();
-
-            lastBounceTime = Time.time;
-        }
-    }
-
-    void gameRestart()
-    {
-        gameStarted = false;
-        transform.position = new Vector3(0, 0.68f, -7.74f);
-        rb.velocity = Vector3.zero;
-        if (paleta != null)
-        {
-            paleta.transform.position = new Vector3(0, 0.68f, -8.5f);
-        }
-        direction = new Vector3(0, 0, 1).normalized;
-        ApplyVelocity();
-    }
-
-    void ApplyVelocity()
-    {
-        rb.velocity = direction * speed;
     }
 }
