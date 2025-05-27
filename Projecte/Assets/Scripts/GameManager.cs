@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioSource musicaJuego;
     [SerializeField] private AudioSource musicaDerrota;
 
+    public bool controlHabilitado = false; // Para habilitar o deshabilitar el control del jugador
 
     // Start is called before the first frame update
     private void Awake()
@@ -98,6 +99,11 @@ public class GameManager : MonoBehaviour
         {
             loadScene("Nivel5");
         }
+    }
+
+    public void HabilitarControl()
+    {
+        controlHabilitado = true;
     }
 
     public void addScore(int points)

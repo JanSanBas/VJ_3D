@@ -9,7 +9,7 @@ public class ScriptPaleta : MonoBehaviour
     private float xMin;
 
     private float speed;
-    public bool playing = true;
+    public bool playing = false;
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +22,7 @@ public class ScriptPaleta : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!playing) return;
+        if (!playing || !GameManager.Instance.controlHabilitado) return;
 
         float horizontalInput = Input.GetAxis("Horizontal");
         

@@ -55,7 +55,7 @@ public class ScriptBola : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (gameFinished)
+        if (gameFinished || !GameManager.Instance.controlHabilitado)
         {
             if (paleta != null)
             {
