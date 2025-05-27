@@ -26,6 +26,7 @@ public class ScriptMenu : MonoBehaviour
 
     public void Jugar()
     {
+        EventSystem.current.SetSelectedGameObject(null);
         StartCoroutine(PlaySoundAndLoadScene("Nivel1"));
     }
 
@@ -41,6 +42,7 @@ public class ScriptMenu : MonoBehaviour
 
     public void Sortir()
     {
+        EventSystem.current.SetSelectedGameObject(null);
         Application.Quit();
     }
 
@@ -52,6 +54,10 @@ public class ScriptMenu : MonoBehaviour
 
     public void ResetHighScore()
     {
+        EventSystem.current.SetSelectedGameObject(null);
+        if (clickSound != null)
+            clickSound.Play();
+
         PlayerPrefs.DeleteKey("HighScore");
         PlayerPrefs.Save();
 

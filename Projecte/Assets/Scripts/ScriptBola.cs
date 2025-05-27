@@ -5,6 +5,7 @@ using UnityEngine;
 public class ScriptBola : MonoBehaviour
 {
     public bool gameStarted;
+    public bool gameFinished;
 
     public bool godMode;
 
@@ -24,6 +25,7 @@ public class ScriptBola : MonoBehaviour
     {
         transform.position = new Vector3(0, 0.68f, -7.74f);
         gameStarted = false;
+        gameFinished = false;
         godMode = false;
         lastBounceTime = 0f;
 
@@ -53,6 +55,15 @@ public class ScriptBola : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (gameFinished)
+        {
+            if (paleta != null)
+            {
+                Vector3 posPaleta = paleta.position;
+                transform.position = new Vector3(posPaleta.x, transform.position.y, posPaleta.z + 0.75f);
+            }
+            return;
+        }
         if (!gameStarted)
         {
             if (Input.GetKeyUp(KeyCode.Space))

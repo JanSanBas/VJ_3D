@@ -22,8 +22,8 @@ public class ScriptPaleta : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!playing)
-            return;
+        if (!playing) return;
+
         float horizontalInput = Input.GetAxis("Horizontal");
         
         float movement = horizontalInput * speed * Time.deltaTime;

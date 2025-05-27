@@ -96,13 +96,14 @@ public class ScriptDerrota : MonoBehaviour
 
     public void Inicio()
     {
-        Time.timeScale = 1f; // Asegurarse de que el tiempo se reanuda
+        EventSystem.current.SetSelectedGameObject(null);
         GameManager.Instance.Reset();
         StartCoroutine(PlaySoundAndLoadScene("MainMenu"));
     }
 
     public void Sortir()
     {
+        EventSystem.current.SetSelectedGameObject(null);
         GameManager.Instance.Reset();
         Application.Quit();
     }

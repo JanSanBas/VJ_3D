@@ -8576,6 +8576,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76a931c15bdaa70419c2f3888863141b, type: 3}
+--- !u!114 &504210747789673174 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7160588627390633520, guid: 76a931c15bdaa70419c2f3888863141b, type: 3}
+  m_PrefabInstance: {fileID: 504210747789673173}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f680665d646dd444e8f4286502aab4d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3293091084346934891
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8869,6 +8880,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4601235555589827084, guid: 87bc22028b442ed4b9e964c5d62e0052, type: 3}
+    - {fileID: 5713551068636013448, guid: 87bc22028b442ed4b9e964c5d62e0052, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4304591200456503485, guid: 87bc22028b442ed4b9e964c5d62e0052, type: 3}
@@ -9300,7 +9312,8 @@ MonoBehaviour:
   panelDerrota: {fileID: 1219470925}
   fadeDuration: 1.5
   textoDerrota: {fileID: 142611190}
-  scriptPaleta: {fileID: 0}
+  scriptPaleta: {fileID: 8477152335403824566}
+  scriptBola: {fileID: 504210747789673174}
   numeroPuntosText: {fileID: 86511264}
   numeroVidasText: {fileID: 1944361335}
   numeroNivelText: {fileID: 2047776965}
@@ -9701,7 +9714,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 5a802c4cb56c9e9428af6d5f5a0c0f3e, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 248ac304b1a59d544baa82b42fb2f62b, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.551
   m_Pitch: 1
@@ -9844,6 +9857,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 699c6f8fd12caeb4e9e320f0d9e38a19, type: 3}
+--- !u!114 &8477152335403824566 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1858600640667944929, guid: 699c6f8fd12caeb4e9e320f0d9e38a19, type: 3}
+  m_PrefabInstance: {fileID: 8477152335403824565}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d6144a9f064c924fa320b59b9207511, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

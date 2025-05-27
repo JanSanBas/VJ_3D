@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     private int level;
 
     [SerializeField] private ScriptPaleta scriptPaleta;
+    [SerializeField] private ScriptBola scriptBola;
 
     // Referencias a la UI
     [SerializeField] private TextMeshProUGUI numeroPuntosText;
@@ -143,6 +144,7 @@ public class GameManager : MonoBehaviour
 
         if (lives <= 0)
         {
+            updateUI();
             GuardarPuntuacionMaxima(score);
             StartCoroutine(FinDelJuego());
         }
@@ -213,6 +215,10 @@ public class GameManager : MonoBehaviour
     {
         if (scriptPaleta != null)
             scriptPaleta.playing = false;
+
+        if (scriptBola != null)
+            scriptBola.gameFinished = true;
+
         // Pausar música del juego
         if (musicaJuego != null)
             musicaJuego.Pause();
