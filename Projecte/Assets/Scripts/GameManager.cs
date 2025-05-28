@@ -142,6 +142,10 @@ public class GameManager : MonoBehaviour
 
     public void reduceLives()
     {
+        if (PowerUpManager.Instance != null) {
+            PowerUpManager.Instance.DestroyAllActivePowerUps();
+        }
+            
         lives--;
         persistentLives = lives; // Guardar en datos persistentes
 
@@ -152,7 +156,16 @@ public class GameManager : MonoBehaviour
             // Puedes cargar una escena de Game Over o reiniciar el juego
             // SceneManager.LoadScene("GameOverScene"); // Ejemplo: cargar una escena de Game Over
         }
-        else updateUI();
+        else
+        {
+            updateUI();
+            ScriptBola bola = FindObjectOfType<ScriptBola>();
+            ScriptPaleta paleta = FindObjectOfType<ScriptPaleta>();
+            bola.gameRestart();
+            paleta.ResetPaddleScale(); // Resetear la paleta a su tamaño original
+            PowerUpManager.Instance.DeactivatePowerBall();
+
+        }
     }
 
     public void addLife()

@@ -176,7 +176,8 @@ public class ScriptBola : MonoBehaviour
 
         float bounceAngle = normalizedHitPointX * maxBounceAngle;
 
-        direction = Quaternion.Euler(0, 0, bounceAngle) * Vector3.forward;
+
+        direction = Quaternion.Euler(0, bounceAngle, 0) * Vector3.forward;
 
         if (direction.z < 0) direction.z *= -1;
 
@@ -303,7 +304,7 @@ public class ScriptBola : MonoBehaviour
         isReleasing = false;
     }
 
-    void gameRestart()
+    public void gameRestart()
     {
         gameStarted = false;
         godMode = false;

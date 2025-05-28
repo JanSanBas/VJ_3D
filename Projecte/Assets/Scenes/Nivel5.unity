@@ -32957,7 +32957,8 @@ MonoBehaviour:
   powerUpPrefab: {fileID: 1186215682}
   dropChance: 0.1
   powerUpSpeed: 2
-  powerUpDuration: 100
+  powerUpDuration: 10
+  dropCooldown: 0.5
   individualDropChances:
   - type: 0
     chance: 0.2

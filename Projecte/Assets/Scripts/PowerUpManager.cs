@@ -17,11 +17,15 @@ public class PowerUpManager : MonoBehaviour
         public float chance;
     }
 
+    private List<GameObject> activePowerUpItems = new List<GameObject>();
+
     [Header("Power-Up General Settings")]
     [SerializeField] private GameObject powerUpPrefab;
-    [SerializeField] private float dropChance = 0.3f; // Probabilidad general de que *cualquier* power-up dropee
+    [SerializeField] private float dropChance = 0.1f; // Probabilidad general de que *cualquier* power-up dropee
     [SerializeField] private float powerUpSpeed = 2f;
     [SerializeField] private float powerUpDuration = 10f;
+    [SerializeField] private float dropCooldown = 0.5f; // Tiempo entre drops de power-ups
+    private float lastDropTime = 0f;
 
     [Header("Individual Power-Up Drop Chances")]
     [SerializeField] private List<PowerUpDropChance> individualDropChances; // Lista de probabilidades individuales
@@ -97,6 +101,14 @@ public class PowerUpManager : MonoBehaviour
 
     public void TryDropPowerUp(Vector3 position)
     {
+        
+        activePowerUpItems.RemoveAll(item => item == null); // Limpiar la lista de objetos nulos
+
+        if (Time.time < lastDropTime + dropCooldown)
+        {
+            return; // No dropear si no ha pasado el tiempo de cooldown
+        }
+
         // Lógica para el Power-Up Next Level (prioritaria si se cumplen las condiciones)
         if (GameManager.Instance != null && GameManager.Instance.CanDropNextLevelPowerUp() && !hasNextLevelPowerUpBeenDroppedThisLevel)
         {
@@ -112,6 +124,7 @@ public class PowerUpManager : MonoBehaviour
         // Lógica para otros Power-Ups
         if (Random.Range(0f, 1f) <= dropChance) // Probabilidad general de que *algo* dropee
         {
+            lastDropTime = Time.time; // Actualizar el tiempo del último drop
             // Filtrar los power-ups normales (excluir NextLevel de esta selección)
             List<PowerUpDropChance> normalPowerUps = new List<PowerUpDropChance>();
             foreach (var item in individualDropChances)
@@ -161,12 +174,18 @@ public class PowerUpManager : MonoBehaviour
             if (powerUpItem != null)
             {
                 powerUpItem.Initialize(type, powerUpSpeed);
+                activePowerUpItems.Add(powerUp);
             }
         }
     }
 
     public void ActivatePowerUp(PowerUpType type)
     {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.addScore(1000);
+        }
+
         switch (type)
         {
             case PowerUpType.PowerBall:
@@ -224,7 +243,7 @@ public class PowerUpManager : MonoBehaviour
         DeactivatePowerBall();
     }
 
-    private void DeactivatePowerBall()
+    public void DeactivatePowerBall()
     {
         if (!isPowerBallActive) return;
 
@@ -438,6 +457,20 @@ public class PowerUpManager : MonoBehaviour
         DeactivateMagnet();
 
         hasNextLevelPowerUpBeenDroppedThisLevel = false;
+    }
+
+    public void DestroyAllActivePowerUps()
+    {
+        activePowerUpItems.RemoveAll(item => item == null); // Limpiar la lista de objetos nulos
+
+        foreach (GameObject powerUp in activePowerUpItems)
+        {
+            if (powerUp != null)
+            {
+                Destroy(powerUp);
+            }
+        }
+        activePowerUpItems.Clear();
     }
 }
 
