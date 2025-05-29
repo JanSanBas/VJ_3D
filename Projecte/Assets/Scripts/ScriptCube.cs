@@ -7,6 +7,7 @@ public class ScriptCube : MonoBehaviour
     private Rigidbody rb;
     private int puntuacionCubo = 500;
     private bool constraintsApplied = false;
+    public GameObject particulasPrefab;
 
     void Start()
     {
@@ -48,6 +49,13 @@ public class ScriptCube : MonoBehaviour
 
    public void collisionWithBall()
     {
+
+        if (particulasPrefab != null)
+        {
+            GameObject efecto = Instantiate(particulasPrefab, transform.position, Quaternion.identity);
+            Destroy(efecto, 2f);
+        }
+
         GameManager.Instance.addScore(puntuacionCubo);
 
         Destroy(gameObject,0.01f);
