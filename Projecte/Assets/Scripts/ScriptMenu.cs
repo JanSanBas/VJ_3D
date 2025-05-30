@@ -15,6 +15,10 @@ public class ScriptMenu : MonoBehaviour
 
     void Start()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        StartCoroutine(DesactivarSeleccionInicial());
+
         // Leer la puntuación máxima desde PlayerPrefs
         int highScore = PlayerPrefs.GetInt("HighScore", 0);
 
@@ -22,6 +26,12 @@ public class ScriptMenu : MonoBehaviour
         {
             highScoreText.text = "Puntuacion Maxima: " + highScore;
         }
+    }
+
+    private IEnumerator DesactivarSeleccionInicial()
+    {
+        yield return null; // Esperar 1 frame
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void Jugar()

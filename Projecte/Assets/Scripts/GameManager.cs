@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private ScriptPaleta scriptPaleta;
     [SerializeField] private ScriptBola scriptBola;
+    [SerializeField] private ScriptCreditos scriptCreditos;
 
     // Referencias a la UI
     [SerializeField] private TextMeshProUGUI numeroPuntosText;
@@ -102,7 +103,17 @@ public class GameManager : MonoBehaviour
 
         if (currentCubesCount <= 0) // Todos los cubos destruidos
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Carga el siguiente nivel
+            if (SceneManager.GetActiveScene().name == "Nivel5")
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+
+                SceneManager.LoadScene("Credits");
+            }
+            else
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Carga el siguiente nivel
+            }
         }
 
         if (Input.GetKeyUp(KeyCode.Alpha1) || Input.GetKeyUp(KeyCode.Keypad1))
@@ -270,6 +281,14 @@ public class GameManager : MonoBehaviour
             hitPaleta.Play();
         else
             Debug.LogWarning("El AudioSource 'hitPaleta' no está asignado en el GameManager.");
+    }
+
+    public void CompletarJuego()
+    {
+        // Guardar puntuación máxima al completar el juego
+        GuardarPuntuacionMaxima(score);
+        // Reiniciar los datos persistentes para el próximo juego
+        Reset(); // Resetear el estado de superación de créditos
     }
 
     void GuardarPuntuacionMaxima(int puntuacionActual)
