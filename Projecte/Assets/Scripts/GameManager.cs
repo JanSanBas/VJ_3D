@@ -130,6 +130,7 @@ public class GameManager : MonoBehaviour
     public void HabilitarControl()
     {
         controlHabilitado = true;
+        scriptPaleta.playing = true; // Habilitar el control de la paleta
     }
 
     public void addScore(int points)
@@ -145,7 +146,7 @@ public class GameManager : MonoBehaviour
     {
         if (numeroPuntosText != null)
         {
-            numeroPuntosText.text = score.ToString();
+            numeroPuntosText.text = score.ToString("D6");
         }
 
         if (numeroVidasText != null)

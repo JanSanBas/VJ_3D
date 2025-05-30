@@ -90,6 +90,7 @@ public class ScriptBola : MonoBehaviour
             if (Input.GetKeyUp(KeyCode.Space))
             {
                 gameStarted = true;
+                GameManager.Instance.HabilitarControl();
                 ApplyVelocity();
             }
         }
@@ -194,35 +195,46 @@ public class ScriptBola : MonoBehaviour
 
     void collisionWithPaleta(Collision collision)
     {
-        // Si el im�n est� activo y la bola no est� ya enganchada, engancharla
+        // Si el imán está activo y la bola no está ya enganchada, engancharla
         if (isMagnetPowerUpActive && !isBallAttached)
         {
             AttachBall(collision);
-            PowerUpManager.Instance.UseMagnetCharge(); // Notificar al PowerUpManager que se us� una carga
+            PowerUpManager.Instance.UseMagnetCharge(); // Notificar al PowerUpManager que se usó una carga
             return;
         }
 
         ContactPoint contact = collision.contacts[0];
         Vector3 paddleCenter = collision.gameObject.transform.position;
 
+        // Calcular la posición del impacto relativa al centro de la paleta
         float hitPointX = contact.point.x - paddleCenter.x;
+        // Obtener el ancho de la paleta dinámicamente, considerando su escala
         float paddleWidth = collision.collider.bounds.size.x;
+        // Normalizar la posición del impacto (-1 para el extremo izquierdo, 0 para el centro, 1 para el extremo derecho)
         float normalizedHitPointX = hitPointX / (paddleWidth / 2f);
 
+        // Calcular el ángulo de rebote. Multiplicamos la posición normalizada por el ángulo máximo.
+        // Esto significa que si golpea en el centro (0), el ángulo será 0 (recto).
+        // Si golpea en el extremo (1 o -1), el ángulo será 'maxBounceAngle' o '-maxBounceAngle'.
         float bounceAngle = normalizedHitPointX * maxBounceAngle;
 
-        float distanciaNormalizada = Mathf.Clamp((distAlMedio / (medidaPaleta / 2f)), -1f, 1f);
-
+        // Establecer la nueva dirección de la bola usando el ángulo calculado.
+        // Quaternion.Euler(0, bounceAngle, 0) rota el vector 'Vector3.forward' alrededor del eje Y.
         direction = Quaternion.Euler(0, bounceAngle, 0) * Vector3.forward;
 
-        if (direction.z < 0) direction.z *= -1;
+        // Asegurarse de que la bola siempre se mueva hacia adelante en el eje Z (hacia arriba en el juego)
+        if (direction.z < 0)
+        {
+            direction.z *= -1;
+        }
 
+        // Normalizar la dirección para asegurar que la magnitud del vector sea 1
         direction.Normalize();
 
-        ApplyVelocity();
-        lastBounceTime = Time.time;
+        ApplyVelocity(); // Aplicar la velocidad en la nueva dirección
+        lastBounceTime = Time.time; // Actualizar el tiempo del último rebote
 
-        GameManager.Instance.OnBallHitsPaleta();
+        GameManager.Instance.OnBallHitsPaleta(); // Notificar al GameManager
     }
 
     void collisionWithPared(Collision collision)
@@ -368,36 +380,15 @@ public class ScriptBola : MonoBehaviour
         ApplyVelocity();
     }
 
-    void updatePaletaCollision()
-        {
-            if (paleta != null)
-            {
-                Collider paletaCollider = paleta.GetComponent<Collider>();
-                if (paletaCollider != null)
-                {
-                    Collider bolaCollider = GetComponent<Collider>();
-                    if (bolaCollider != null)
-                    {
-                        Physics.IgnoreCollision(bolaCollider, paletaCollider, godMode);
-                    }
-                }
-            }
-        }
-
-        public void ActivateGodMode(float duration)
-        {
-            if (godModeDuration != null)
-            {
-                StopCoroutine(godModeDuration);
-            }
-            godMode = true;
-            updatePaletaCollision();
-            godModeDuration = StartCoroutine(GodModeDurationRoutine(duration));
-        }
-
-    void ApplyVelocity()
+    public void ActivateGodMode(float duration)
     {
-        rb.velocity = direction * speed;
+        if (godModeDuration != null)
+        {
+            StopCoroutine(godModeDuration);
+        }
+        godMode = true;
+        updatePaletaCollision();
+        godModeDuration = StartCoroutine(GodModeDurationRoutine(duration));
     }
 
     private IEnumerator GodModeDurationRoutine(float duration)
