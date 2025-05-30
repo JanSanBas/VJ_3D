@@ -161,6 +161,12 @@ public class ScriptBola : MonoBehaviour
             return;
         }
 
+        if (collision.gameObject.CompareTag("Rocket"))
+        {
+
+            return;
+        }
+
         if (collision.gameObject.CompareTag("Paleta"))
         {
             collisionWithPaleta(collision);
