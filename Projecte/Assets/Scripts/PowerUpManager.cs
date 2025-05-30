@@ -39,7 +39,7 @@ public class PowerUpManager : MonoBehaviour
     [SerializeField] private float smallPaddleScale = 0.5f;
 
     [Header("Magnet Power-Up Settings")]
-    [SerializeField] private int maxMagnetUses = 5;
+    [SerializeField] private int maxMagnetUses = 6;
 
     [Header("God Mode Settings")]
     [SerializeField] private float godModeDuration = 5f;
