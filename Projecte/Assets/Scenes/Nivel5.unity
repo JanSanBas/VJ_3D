@@ -36499,9 +36499,25 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6133781041798331701, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
+      propertyPath: rocketPrefab
+      value: 
+      objectReference: {fileID: 3244350561022305153, guid: 899ad38e2d095c442ab31e55bae6ebf9, type: 3}
+    - target: {fileID: 6133781041798331701, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
       propertyPath: powerUpPrefab
       value: 
       objectReference: {fileID: 2048193051}
+    - target: {fileID: 6133781041798331701, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
+      propertyPath: individualDropChances.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133781041798331701, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
+      propertyPath: individualDropChances.Array.data[7].type
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133781041798331701, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
+      propertyPath: individualDropChances.Array.data[7].chance
+      value: 0.15
+      objectReference: {fileID: 0}
     - target: {fileID: 8602722987941810357, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
       propertyPath: m_Name
       value: PowerUpManager

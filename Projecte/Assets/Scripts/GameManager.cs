@@ -192,7 +192,7 @@ public class GameManager : MonoBehaviour
             ScriptPaleta paleta = FindObjectOfType<ScriptPaleta>();
             bola.gameRestart();
             paleta.ResetPaddleScale(); // Resetear la paleta a su tamaño original
-            PowerUpManager.Instance.DeactivatePowerBall();
+            PowerUpManager.Instance.ResetPowerUps();
         }
     }
 
