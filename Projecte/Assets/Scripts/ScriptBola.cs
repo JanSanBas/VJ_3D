@@ -5,6 +5,7 @@ using UnityEngine;
 public class ScriptBola : MonoBehaviour
 {
     public bool gameStarted;
+    public bool gameFinished;
 
     public bool godMode;
 
@@ -21,13 +22,13 @@ public class ScriptBola : MonoBehaviour
 
     private bool isPowerBallActive = false; // Estado del PowerBall en la bola
 
-    // --- Nuevas variables para el imán ---
+    // --- Nuevas variables para el imï¿½n ---
     private bool isMagnetPowerUpActive = false;
     private bool isBallAttached = false;
     private Vector3 offsetFromPaddle;
 
-    // --- Nuevas variables para la liberación controlada ---
-    private bool isReleasing = false; // Nuevo: indica si la bola está en proceso de liberación
+    // --- Nuevas variables para la liberaciï¿½n controlada ---
+    private bool isReleasing = false; // Nuevo: indica si la bola estï¿½ en proceso de liberaciï¿½n
     [SerializeField] private float releaseImmunityDuration = 0.1f; // Nuevo: tiempo que ignora colisiones con la paleta al liberarse
 
     [SerializeField] private Coroutine godModeDuration;
@@ -37,6 +38,7 @@ public class ScriptBola : MonoBehaviour
     {
         transform.position = new Vector3(0, 0.68f, -7.74f);
         gameStarted = false;
+        gameFinished = false;
         godMode = false;
         lastBounceTime = 0f;
 
@@ -55,7 +57,7 @@ public class ScriptBola : MonoBehaviour
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
 
-        direction = new Vector3(0, 0, 1).normalized;
+       direction = new Vector3(0, 0, 1).normalized;
         // ApplyVelocity(); // La velocidad se aplica solo cuando el juego empieza
 
         GameObject paddleObj = GameObject.FindGameObjectWithTag("Paleta");
@@ -69,28 +71,41 @@ public class ScriptBola : MonoBehaviour
     void Update()
     {
         // Si el juego no ha empezado, la bola se mueve con la paleta
+        if (gameFinished || !GameManager.Instance.controlHabilitado)
+        {
+            if (paleta != null)
+            {
+                Vector3 posPaleta = paleta.position;
+                transform.position = new Vector3(posPaleta.x, transform.position.y, posPaleta.z + 0.75f);
+            }
+            return;
+        }
         if (!gameStarted)
         {
             if (paleta != null)
             {
-                transform.position = new Vector3(paleta.position.x, transform.position.y, paleta.position.z + 0.76f);
+               transform.position = new Vector3(paleta.position.x, transform.position.y, paleta.position.z + 0.76f);
             }
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyUp(KeyCode.Space))
             {
                 gameStarted = true;
                 ApplyVelocity();
             }
         }
-        else if (isBallAttached) // Si la bola está enganchada por el imán
+        else if (isBallAttached) // Si la bola estï¿½ enganchada por el imï¿½n
         {
             transform.position = paleta.position + offsetFromPaddle;
             rb.velocity = Vector3.zero; // Asegurar que no se mueva por su cuenta
 
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
+            if (Input.GetKeyDown(KeyCode.Space)) {
                 ReleaseBall(); // Liberar la bola
             }
+        }
+
+        if (gameStarted && rb.velocity.magnitude != speed)
+        {
+            rb.velocity = rb.velocity.normalized * speed;
         }
 
         if (transform.position.z < -9f)
@@ -114,7 +129,7 @@ public class ScriptBola : MonoBehaviour
             else
             {
                 GameManager.Instance.reduceLives(); // Llama al GameManager para reducir una vida
-                gameRestart(); // Reinicia la posición de la bola para la siguiente vida
+                gameRestart(); // Reinicia la posiciï¿½n de la bola para la siguiente vida
             }
         }
 
@@ -132,38 +147,58 @@ public class ScriptBola : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        // Si la bola está en proceso de liberación y colisiona con la paleta, ignorar
         if (isReleasing && collision.gameObject.CompareTag("Paleta"))
         {
             return;
         }
+
+        if (gameStarted == false)
+            return;
 
         if (Time.time - lastBounceTime < bounceCooldown)
         {
             return;
         }
 
-        if (collision.gameObject.CompareTag("Pared"))
+        if (collision.gameObject.CompareTag("Paleta"))
+        {
+            collisionWithPaleta(collision);
+        }
+
+        else if (collision.gameObject.CompareTag("Pared"))
         {
             collisionWithPared(collision);
         }
+
         else if (collision.gameObject.CompareTag("Cubo"))
         {
             collisionWithCubo(collision);
         }
-        else if (collision.gameObject.CompareTag("Paleta"))
+    }
+
+    void updatePaletaCollision()
+    {
+        if (paleta != null)
         {
-            collisionWithPaleta(collision);
+            Collider paletaCollider = paleta.GetComponent<Collider>();
+            if (paletaCollider != null)
+            {
+                Collider bolaCollider = GetComponent<Collider>();
+                if (bolaCollider != null)
+                {
+                    Physics.IgnoreCollision(bolaCollider, paletaCollider, godMode);
+                }
+            }
         }
     }
 
     void collisionWithPaleta(Collision collision)
     {
-        // Si el imán está activo y la bola no está ya enganchada, engancharla
+        // Si el imï¿½n estï¿½ activo y la bola no estï¿½ ya enganchada, engancharla
         if (isMagnetPowerUpActive && !isBallAttached)
         {
             AttachBall(collision);
-            PowerUpManager.Instance.UseMagnetCharge(); // Notificar al PowerUpManager que se usó una carga
+            PowerUpManager.Instance.UseMagnetCharge(); // Notificar al PowerUpManager que se usï¿½ una carga
             return;
         }
 
@@ -176,6 +211,7 @@ public class ScriptBola : MonoBehaviour
 
         float bounceAngle = normalizedHitPointX * maxBounceAngle;
 
+        float distanciaNormalizada = Mathf.Clamp((distAlMedio / (medidaPaleta / 2f)), -1f, 1f);
 
         direction = Quaternion.Euler(0, bounceAngle, 0) * Vector3.forward;
 
@@ -185,6 +221,8 @@ public class ScriptBola : MonoBehaviour
 
         ApplyVelocity();
         lastBounceTime = Time.time;
+
+        GameManager.Instance.OnBallHitsPaleta();
     }
 
     void collisionWithPared(Collision collision)
@@ -207,6 +245,8 @@ public class ScriptBola : MonoBehaviour
         }
 
         ApplyVelocity();
+
+        GameManager.Instance.OnBallHitsPaleta();
         lastBounceTime = Time.time;
     }
 
@@ -222,68 +262,68 @@ public class ScriptBola : MonoBehaviour
                 cubeScript.collisionWithBall();
             }
 
-            if (!isPowerBallActive) // Si PowerBall NO está activo, la bola rebota.
+            if (!isPowerBallActive) // Si PowerBall NO estï¿½ activo, la bola rebota.
             {
                 ContactPoint contact = collision.contacts[0];
                 Vector3 normal = contact.normal;
                 direction = Vector3.Reflect(direction, normal).normalized;
-
                 float randomAngleOffset = Random.Range(-5f, 5f);
                 direction = Quaternion.Euler(0, randomAngleOffset, 0) * direction;
                 direction.Normalize();
-            }
-            // Si isPowerBallActive es true, la bola no rebota, simplemente destruye el cubo.
-
+             }
+            collision.gameObject.GetComponent<ScriptCube>().collisionWithBall();
             ApplyVelocity();
             lastBounceTime = Time.time;
         }
     }
+
+
 
     public void SetPowerBall(bool active)
     {
         isPowerBallActive = active;
     }
 
-    public void SetMagnetPowerUp(bool active) // Método para establecer el estado del imán
+    public void SetMagnetPowerUp(bool active) // Mï¿½todo para establecer el estado del imï¿½n
     {
         isMagnetPowerUpActive = active;
-        if (!active && isBallAttached) // Si el imán se desactiva y la bola está enganchada, liberarla
+        if (!active && isBallAttached) // Si el imï¿½n se desactiva y la bola estï¿½ enganchada, liberarla
         {
             ReleaseBall();
         }
     }
 
-    private void AttachBall(Collision collision) // Lógica para enganchar la bola
+    private void AttachBall(Collision collision) // Lï¿½gica para enganchar la bola
     {
         isBallAttached = true;
-        rb.isKinematic = true; // Desactivar física para que no se mueva
+        rb.isKinematic = true; // Desactivar fï¿½sica para que no se mueva
         rb.velocity = Vector3.zero; // Asegurarse de que se detiene
 
-        // Calcular el offset para mantener la posición relativa a la paleta
+        // Calcular el offset para mantener la posiciï¿½n relativa a la paleta
         offsetFromPaddle = transform.position - paleta.position;
 
         Debug.Log("Bola enganchada a la paleta!");
     }
 
-    public void ReleaseBall() // Lógica para liberar la bola
+    public void ReleaseBall() // Lï¿½gica para liberar la bola
     {
-        if (!isBallAttached) return; // Si no está enganchada, no hacer nada
+        if (!isBallAttached) return; // Si no estï¿½ enganchada, no hacer nada
 
         isBallAttached = false;
-        rb.isKinematic = false; // Reactivar física
+        rb.isKinematic = false; // Reactivar fï¿½sica
 
-        // Iniciar el período de inmunidad
+        // Iniciar el perï¿½odo de inmunidad
         StartCoroutine(ReleaseImmunityRoutine());
 
-        // La dirección de liberación puede ser un poco más dinámica.
-        // Podrías usar el movimiento de la paleta, o simplemente el centro de la paleta.
-        // Aquí vamos a usar la lógica de rebote de la paleta para darle una dirección inicial.
+        // La direcciï¿½n de liberaciï¿½n puede ser un poco mï¿½s dinï¿½mica.
+        // Podrï¿½as usar el movimiento de la paleta, o simplemente el centro de la paleta.
+        // Aquï¿½ vamos a usar la lï¿½gica de rebote de la paleta para darle una direcciï¿½n inicial.
         // Para esto necesitamos simular los puntos de contacto, o hacer un rebote simple hacia arriba.
-        // Para un inicio consistente, usaremos una dirección ligeramente aleatoria o basada en la posición actual en la paleta.
+        // Para un inicio consistente, usaremos una direcciï¿½n ligeramente aleatoria o basada en la posiciï¿½n actual en la paleta.
 
-        // Opción 2: Usar la lógica de rebote de la paleta (más realista)
+        // Opciï¿½n 2: Usar la lï¿½gica de rebote de la paleta (mï¿½s realista)
         // Necesitamos calcular el punto de impacto como si acabara de chocar.
-        // Una aproximación simple es usar la posición x relativa de la bola sobre la paleta.
+        // Una aproximaciï¿½n simple es usar la posiciï¿½n x relativa de la bola sobre la paleta.
         float hitPointX = transform.position.x - paleta.position.x;
         float paddleWidth = paleta.GetComponent<Collider>().bounds.size.x; // Asume que la paleta tiene un collider
         float normalizedHitPointX = hitPointX / (paddleWidth / 2f);
@@ -297,7 +337,7 @@ public class ScriptBola : MonoBehaviour
         Debug.Log("Bola liberada!");
     }
 
-    private IEnumerator ReleaseImmunityRoutine() // Coroutine para inmunidad tras liberación
+    private IEnumerator ReleaseImmunityRoutine() // Coroutine para inmunidad tras liberaciï¿½n
     {
         isReleasing = true;
         yield return new WaitForSeconds(releaseImmunityDuration);
@@ -309,11 +349,11 @@ public class ScriptBola : MonoBehaviour
         gameStarted = false;
         godMode = false;
         isPowerBallActive = false;
-        isMagnetPowerUpActive = false; // Asegurarse de que el imán se desactiva en la bola
-        isBallAttached = false; // Asegurarse de que no esté enganchada
-        rb.isKinematic = false; // Reactivar la física si estaba desactivada
+        isMagnetPowerUpActive = false; // Asegurarse de que el imï¿½n se desactiva en la bola
+        isBallAttached = false; // Asegurarse de que no estï¿½ enganchada
+        rb.isKinematic = false; // Reactivar la fï¿½sica si estaba desactivada
 
-        // Asegurarse de que el estado de liberación también se resetee
+        // Asegurarse de que el estado de liberaciï¿½n tambiï¿½n se resetee
         isReleasing = false;
         StopAllCoroutines(); // Detener coroutines pendientes (como ReleaseImmunityRoutine)
 
@@ -329,30 +369,35 @@ public class ScriptBola : MonoBehaviour
     }
 
     void updatePaletaCollision()
-    {
-        if (paleta != null)
         {
-            Collider paletaCollider = paleta.GetComponent<Collider>();
-            if (paletaCollider != null)
+            if (paleta != null)
             {
-                Collider bolaCollider = GetComponent<Collider>();
-                if (bolaCollider != null)
+                Collider paletaCollider = paleta.GetComponent<Collider>();
+                if (paletaCollider != null)
                 {
-                    Physics.IgnoreCollision(bolaCollider, paletaCollider, godMode);
+                    Collider bolaCollider = GetComponent<Collider>();
+                    if (bolaCollider != null)
+                    {
+                        Physics.IgnoreCollision(bolaCollider, paletaCollider, godMode);
+                    }
                 }
             }
         }
-    }
 
-    public void ActivateGodMode(float duration)
-    {
-        if (godModeDuration != null)
+        public void ActivateGodMode(float duration)
         {
-            StopCoroutine(godModeDuration);
+            if (godModeDuration != null)
+            {
+                StopCoroutine(godModeDuration);
+            }
+            godMode = true;
+            updatePaletaCollision();
+            godModeDuration = StartCoroutine(GodModeDurationRoutine(duration));
         }
-        godMode = true;
-        updatePaletaCollision();
-        godModeDuration = StartCoroutine(GodModeDurationRoutine(duration));
+
+    void ApplyVelocity()
+    {
+        rb.velocity = direction * speed;
     }
 
     private IEnumerator GodModeDurationRoutine(float duration)
@@ -365,3 +410,4 @@ public class ScriptBola : MonoBehaviour
         Debug.Log("God Mode desactivado.");
     }
 }
+

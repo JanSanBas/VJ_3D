@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Schema;
 using UnityEngine;
 
 public class ScriptPaleta : MonoBehaviour
@@ -9,6 +10,7 @@ public class ScriptPaleta : MonoBehaviour
 
     private float speed;
     private Vector3 originalScale; // Guardar la escala original
+    public bool playing = false;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +25,8 @@ public class ScriptPaleta : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!playing || !GameManager.Instance.controlHabilitado) return;
+
         float horizontalInput = Input.GetAxis("Horizontal");
 
         float movement = horizontalInput * speed * Time.deltaTime;
@@ -34,7 +38,7 @@ public class ScriptPaleta : MonoBehaviour
 
     }
 
-    // Nuevo método para establecer la escala de la paleta
+    // Nuevo mï¿½todo para establecer la escala de la paleta
     public void SetPaddleScale(float scaleFactor)
     {
         // Multiplica la escala original por el factor
@@ -42,18 +46,18 @@ public class ScriptPaleta : MonoBehaviour
 
         float extraWidthHalf = (transform.localScale.x - originalScale.x) / 2f;
 
-        xMin = -14.41f + extraWidthHalf; // Ajusta los límites de movimiento según la nueva escala
-        xMax = 14.41f - extraWidthHalf; // Ajusta los límites de movimiento según la nueva escala
-        // Asegúrate de que los límites de movimiento también se ajusten si la paleta es muy grande
-        // Esto es opcional y depende de cómo quieras que se maneje el movimiento con paletas grandes.
-        // Por ahora, solo cambiará la escala, pero podría salirse de los límites visualmente.
+        xMin = -14.41f + extraWidthHalf; // Ajusta los lï¿½mites de movimiento segï¿½n la nueva escala
+        xMax = 14.41f - extraWidthHalf; // Ajusta los lï¿½mites de movimiento segï¿½n la nueva escala
+        // Asegï¿½rate de que los lï¿½mites de movimiento tambiï¿½n se ajusten si la paleta es muy grande
+        // Esto es opcional y depende de cï¿½mo quieras que se maneje el movimiento con paletas grandes.
+        // Por ahora, solo cambiarï¿½ la escala, pero podrï¿½a salirse de los lï¿½mites visualmente.
     }
 
-    // Nuevo método para resetear la escala de la paleta a su tamaño original
+    // Nuevo mï¿½todo para resetear la escala de la paleta a su tamaï¿½o original
     public void ResetPaddleScale()
     {
         transform.localScale = originalScale;
-        xMin = -14.41f; // Resetea los límites si es necesario
-        xMax = 14.41f; // Resetea los límites si es necesario
+        xMin = -14.41f; // Resetea los lï¿½mites si es necesario
+        xMax = 14.41f; // Resetea los lï¿½mites si es necesario
     }
 }
