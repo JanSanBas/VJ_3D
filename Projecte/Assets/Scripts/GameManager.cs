@@ -44,6 +44,13 @@ public class GameManager : MonoBehaviour
 
     public bool controlHabilitado = false; // Para habilitar o deshabilitar el control del jugador
 
+    // --- Nuevas variables para el conteo de cubos ---
+    private int initialTotalCubes; // El número total de cubos al inicio del nivel
+    // No necesitamos destroyedCubesCount explícitamente porque contaremos los hijos restantes
+
+    // Bandera para permitir el dropeo del power-up Next Level
+    private bool canDropNextLevelPowerUp = false; // Se activa una vez que se cumple el 95%
+
     // Start is called before the first frame update
     private void Awake()
     {
@@ -70,15 +77,34 @@ public class GameManager : MonoBehaviour
         // Obtener referencias a los elementos de UI y actualizar
         getUIElements();
         updateUI();
+
+        // Contar el número total de cubos al inicio del nivel
+        // Los cubos son hijos directos del GameManager
+        initialTotalCubes = transform.childCount;
+        canDropNextLevelPowerUp = false; // Resetear para cada nivel
+        Debug.Log($"Total de cubos al inicio del nivel: {initialTotalCubes}");
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (transform.childCount <= 0)
+        // El conteo de hijos de GameManager se actualiza automáticamente
+        // cuando los cubos son destruidos (ya que se destruye el GameObject hijo)
+        int currentCubesCount = transform.childCount;
+        float destructionPercentage = 1f - ((float)currentCubesCount / initialTotalCubes);
+
+        // Si se ha destruido el 95% o más de los cubos y aún no hemos activado la bandera
+        if (destructionPercentage >= 0.95f && !canDropNextLevelPowerUp)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            canDropNextLevelPowerUp = true; // Permite el dropeo del power-up Next Level
+            Debug.Log("95% de cubos destruidos. El power-up Next Level puede empezar a dropearse.");
         }
+
+        if (currentCubesCount <= 0) // Todos los cubos destruidos
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Carga el siguiente nivel
+        }
+
         if (Input.GetKeyUp(KeyCode.Alpha1) || Input.GetKeyUp(KeyCode.Keypad1))
         {
             loadScene("Nivel1");
@@ -145,6 +171,10 @@ public class GameManager : MonoBehaviour
         if (fail != null)
             fail.Play();
 
+        if (PowerUpManager.Instance != null) {
+            PowerUpManager.Instance.DestroyAllActivePowerUps();
+        }
+
         lives--;
         persistentLives = lives;
 
@@ -157,8 +187,22 @@ public class GameManager : MonoBehaviour
         else
         {
             updateUI();
+            ScriptBola bola = FindObjectOfType<ScriptBola>();
+            ScriptPaleta paleta = FindObjectOfType<ScriptPaleta>();
+            bola.gameRestart();
+            paleta.ResetPaddleScale(); // Resetear la paleta a su tamaño original
+            PowerUpManager.Instance.DeactivatePowerBall();
         }
     }
+
+    public void addLife()
+        {
+            lives++;
+            persistentLives = lives; // Guardar en datos persistentes
+            updateUI();
+            Debug.Log("¡Vida extra obtenida! Vidas restantes: " + lives);
+        }
+
 
     public void loadScene(string scene)
     {
@@ -169,6 +213,19 @@ public class GameManager : MonoBehaviour
         // Cargar la nueva escena
         SceneManager.LoadScene(scene);
     }
+
+    // Método para avanzar al siguiente nivel
+    public void GoToNextLevel()
+    {
+        Debug.Log("Avanzando al siguiente nivel...");
+        // Guardar datos antes de cambiar escena
+        persistentScore = score;
+        persistentLives = lives;
+
+        // Cargar la siguiente escena en el orden de build settings
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
 
     private void getUIElements()
     {
@@ -197,6 +254,13 @@ public class GameManager : MonoBehaviour
         level = (SceneManager.GetActiveScene().buildIndex) % 6;
         persistentLevel = level; // Guardar en datos persistentes
         Debug.Log("Nivel actual: " + level + " (basado en buildIndex)");
+    }
+
+    // Método para que el PowerUpManager pueda consultar si el power-up Next Level puede dropearse
+    public bool CanDropNextLevelPowerUp()
+    {
+        // Solo puede dropear si ya se ha superado el umbral del 95%
+        return canDropNextLevelPowerUp;
     }
 
     public void OnBallHitsPaleta()
@@ -290,5 +354,4 @@ public class GameManager : MonoBehaviour
         persistentLevel = 1;
         isInitialized = false;
     }
-
 }

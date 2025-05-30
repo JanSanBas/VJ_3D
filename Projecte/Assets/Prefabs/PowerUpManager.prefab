@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8602722987941810357
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3620316533513003043}
+  - component: {fileID: 6133781041798331701}
+  m_Layer: 0
+  m_Name: PowerUpManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3620316533513003043
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8602722987941810357}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6133781041798331701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8602722987941810357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b62a0a9c1d72374fa2839564c7e6899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  powerUpPrefab: {fileID: 0}
+  dropChance: 0.1
+  powerUpSpeed: 2
+  powerUpDuration: 10
+  dropCooldown: 0.5
+  individualDropChances:
+  - type: 0
+    chance: 0.2
+  - type: 1
+    chance: 0.2
+  - type: 2
+    chance: 0.1
+  - type: 3
+    chance: 0.15
+  - type: 4
+    chance: 0.15
+  - type: 5
+    chance: 0.1
+  - type: 7
+    chance: 0.05
+  powerBallMaterial: {fileID: 2100000, guid: b0cd5b9e9296eab48ba72a10fddc3de4, type: 2}
+  normalBallMaterial: {fileID: 2100000, guid: d1a7a11703b15554eb1e09a94ce6a47d, type: 2}
+  bigPaddleScale: 1.5
+  smallPaddleScale: 0.5
+  maxMagnetUses: 5
+  godModeDuration: 5
+  nextLevelDropChance: 0.1
