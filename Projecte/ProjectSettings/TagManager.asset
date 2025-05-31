@@ -11,6 +11,11 @@ TagManager:
   - Paleta
   - GameManager
   - PowerUp
+  - Gato
+  - Elefante
+  - Perro
+  - "Ping\xFCino"
+  - Cuervo
   layers:
   - Default
   - TransparentFX

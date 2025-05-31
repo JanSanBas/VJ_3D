@@ -8,6 +8,12 @@ using UnityEngine.Rendering;
 public class GameManager : MonoBehaviour
 {
     public AudioSource destroyCube;
+    public AudioSource destroyCat;
+    public AudioSource destroyElephant;
+    public AudioSource destroyDog;
+    public AudioSource destroyPenguin;
+    public AudioSource destroyCrow;
+    public AudioSource powerUp;
     public AudioSource fail;
     public AudioSource hitPaleta;
 
@@ -144,10 +150,22 @@ public class GameManager : MonoBehaviour
         scriptPaleta.playing = true; // Habilitar el control de la paleta
     }
 
-    public void addScore(int points)
+    public void addScore(int points, string type)
     {
-        if (destroyCube != null)
+        if (destroyCube != null && type == "Cubo")
             destroyCube.Play();
+        if (destroyCat != null && type == "Gato")
+            destroyCat.Play();
+        if (destroyElephant != null && type == "Elefante")
+            destroyElephant.Play();
+        if (destroyDog != null && type == "Perro")
+            destroyDog.Play();
+        if (destroyPenguin != null && type == "Pingüino")
+            destroyPenguin.Play();
+        if (destroyCrow != null && type == "Cuervo")
+            destroyCrow.Play();
+        if (powerUp != null && type == "PowerUp")
+            powerUp.Play();
         score += points;
         persistentScore = score; // Guardar en datos persistentes
         updateUI();
@@ -183,7 +201,8 @@ public class GameManager : MonoBehaviour
         if (fail != null)
             fail.Play();
 
-        if (PowerUpManager.Instance != null) {
+        if (PowerUpManager.Instance != null)
+        {
             PowerUpManager.Instance.DestroyAllActivePowerUps();
         }
 
@@ -208,12 +227,12 @@ public class GameManager : MonoBehaviour
     }
 
     public void addLife()
-        {
-            lives++;
-            persistentLives = lives; // Guardar en datos persistentes
-            updateUI();
-            Debug.Log("¡Vida extra obtenida! Vidas restantes: " + lives);
-        }
+    {
+        lives++;
+        persistentLives = lives; // Guardar en datos persistentes
+        updateUI();
+        Debug.Log("¡Vida extra obtenida! Vidas restantes: " + lives);
+    }
 
 
     public void loadScene(string scene)

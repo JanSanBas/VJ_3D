@@ -45,7 +45,7 @@ public class ScriptCube : MonoBehaviour
         }
     }
 
-    public void collisionWithBall()
+    public void collisionWithBall(string type)
     {
 
         if (particulasPrefab != null)
@@ -54,7 +54,7 @@ public class ScriptCube : MonoBehaviour
             Destroy(efecto, 2f);
         }
 
-        GameManager.Instance.addScore(puntuacionCubo);
+        GameManager.Instance.addScore(puntuacionCubo, type);
 
         // Intentar dropear power-up antes de destruir
         // PowerUpManager decidirá si puede dropear el Next Level basado en el conteo de cubos del GameManager
@@ -70,7 +70,7 @@ public class ScriptCube : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Bola"))
         {
-            collisionWithBall();
+            collisionWithBall(null);
         }
     }
 }
