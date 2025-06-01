@@ -48,7 +48,7 @@ public class PowerUpManager : MonoBehaviour
     [SerializeField] private float smallPaddleScale = 0.5f;
 
     [Header("Magnet Power-Up Settings")]
-    [SerializeField] private int maxMagnetUses = 6;
+    [SerializeField] private int maxMagnetUses = 5;
 
     [Header("God Mode Settings")]
     [SerializeField] private float godModeDuration = 5f;
@@ -82,6 +82,11 @@ public class PowerUpManager : MonoBehaviour
 
     private ScriptBola ballScript;
     private ScriptPaleta paddleScript;
+    public ScriptUI ui;
+
+    public float tPowerBall;
+    public float tBigPaddle;
+    public float tSmallPaddle;
 
     private void Awake()
     {
@@ -117,7 +122,16 @@ public class PowerUpManager : MonoBehaviour
             Debug.LogError("Paleta no encontrada. Aseg�rate de que tenga el tag 'Paleta'.");
         }
         hasNextLevelPowerUpBeenDroppedThisLevel = false;
+        GameObject uiGO = GameObject.Find("UI");
+        if (uiGO != null)
+        {
+            ui = uiGO.GetComponent<ScriptUI>();
+        }
+        tPowerBall = 0;
+        tBigPaddle = 0;
+        tSmallPaddle = 0;
     }
+
 
     public void TryDropPowerUp(Vector3 position)
     {
@@ -303,12 +317,22 @@ public class PowerUpManager : MonoBehaviour
 
     private IEnumerator DeactivatePowerBallAfterTime()
     {
-        yield return new WaitForSeconds(powerUpDuration);
+        tPowerBall = powerUpDuration;
+        while (tPowerBall > 0)
+        {
+            if (ui != null) ui.SetTiempoPowerBall(tPowerBall);
+            yield return null;
+            tPowerBall -= Time.deltaTime;
+        }
+
+        if (ui != null) ui.SetTiempoPowerBall(0);
         DeactivatePowerBall();
     }
 
     public void DeactivatePowerBall()
     {
+        tPowerBall = 0;
+        ui.SetTiempoPowerBall(0);
         if (!isPowerBallActive) return;
 
         isPowerBallActive = false;
@@ -345,12 +369,22 @@ public class PowerUpManager : MonoBehaviour
 
     private IEnumerator DeactivateBigPaddleAfterTime()
     {
-        yield return new WaitForSeconds(powerUpDuration);
+        tBigPaddle = powerUpDuration;
+        while (tBigPaddle > 0)
+        {
+            if (ui != null) ui.SetTiempoAgrandar(tBigPaddle);
+            yield return null;
+            tBigPaddle -= Time.deltaTime;
+        }
+
+        if (ui != null) ui.SetTiempoAgrandar(0);
         DeactivateBigPaddle();
     }
 
     private void DeactivateBigPaddle()
     {
+        tBigPaddle = 0;
+        ui.SetTiempoAgrandar(0);
         if (!isBigPaddleActive) return;
 
         isBigPaddleActive = false;
@@ -386,12 +420,22 @@ public class PowerUpManager : MonoBehaviour
 
     private IEnumerator DeactivateSmallPaddleAfterTime()
     {
-        yield return new WaitForSeconds(powerUpDuration);
+        tSmallPaddle = powerUpDuration;
+        while (tSmallPaddle > 0)
+        {
+            if (ui != null) ui.SetTiempoReducir(tSmallPaddle);
+            yield return null;
+            tSmallPaddle -= Time.deltaTime;
+        }
+
+        if (ui != null) ui.SetTiempoReducir(0);
         DeactivateSmallPaddle();
     }
 
     private void DeactivateSmallPaddle()
     {
+        tSmallPaddle = 0;
+        ui.SetTiempoReducir(0);
         if (!isSmallPaddleActive) return;
 
         isSmallPaddleActive = false;
@@ -405,6 +449,7 @@ public class PowerUpManager : MonoBehaviour
     // --- Normal Ball Logic ---
     private void ActivateNormalBall()
     {
+        ui.SetTiempoPowerBall(0); // Asegurar que el UI de PowerBall se actualice
         if (isPowerBallActive)
         {
             DeactivatePowerBall();
@@ -427,7 +472,11 @@ public class PowerUpManager : MonoBehaviour
 
         // Ahora activar limpiamente
         isMagnetActive = true;
-        currentMagnetUses = maxMagnetUses;
+        if (ballScript.isBallAttached)
+        {
+            currentMagnetUses = maxMagnetUses - 1; // Si la bola ya est�� unida, restar un uso
+        }
+        else currentMagnetUses = maxMagnetUses;
 
         Debug.Log($"Magnet activado! Usos restantes: {currentMagnetUses}");
 
@@ -435,6 +484,7 @@ public class PowerUpManager : MonoBehaviour
         {
             ballScript.SetMagnetPowerUp(true);
         }
+        if (ui != null) ui.SetUsosIman(currentMagnetUses);
     }
 
     public void UseMagnetCharge()
@@ -442,6 +492,7 @@ public class PowerUpManager : MonoBehaviour
         if (isMagnetActive)
         {
             currentMagnetUses--;
+            if (ui != null) ui.SetUsosIman(currentMagnetUses);
             Debug.Log($"Uso de im�n restante: {currentMagnetUses}");
             if (currentMagnetUses <= 0)
             {
@@ -460,7 +511,7 @@ public class PowerUpManager : MonoBehaviour
         if (ballScript != null)
         {
             ballScript.SetMagnetPowerUp(false);
-            ballScript.ReleaseBall(); // Asegurar que la bola se libere
+            //ballScript.ReleaseBall(); // Asegurar que la bola se libere
         }
 
         Debug.Log("Magnet desactivado completamente!");
@@ -526,6 +577,16 @@ public class PowerUpManager : MonoBehaviour
 
         DestroyAllActivePowerUps();
 
+        if (ui != null)
+        {
+            ui.SetTiempoPowerBall(0);
+            ui.SetTiempoAgrandar(0);
+            ui.SetTiempoReducir(0);
+            ui.SetTiempoGodMode(0);
+            ui.SetUsosIman(0);
+            ui.SetUsosCohetes(0);
+        }
+
         hasNextLevelPowerUpBeenDroppedThisLevel = false;
     }
 
@@ -544,6 +605,7 @@ public class PowerUpManager : MonoBehaviour
 
         isRocketActive = true;
         currentRocketSalvos = maxRocketSalvos;
+        if (ui != null) ui.SetUsosCohetes(currentRocketSalvos);
         rocketCoroutine = StartCoroutine(RocketCoroutine());
         Debug.Log("Rocket power-up activado!");
     }
@@ -560,6 +622,7 @@ public class PowerUpManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(rocketFireInterval);
             }
+            if (ui != null) ui.SetUsosCohetes(currentRocketSalvos);
         }
 
         DeactivateRocket();
@@ -607,6 +670,7 @@ public class PowerUpManager : MonoBehaviour
         isRocketActive = false;
         if (rocketCoroutine != null)
         {
+            if (ui != null) ui.SetUsosCohetes(0);
             StopCoroutine(rocketCoroutine);
             rocketCoroutine = null;
         }
