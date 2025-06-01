@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -13,7 +13,7 @@ public class PowerUpManager : MonoBehaviour
     public class PowerUpDropChance
     {
         public PowerUpType type;
-        [Range(0f, 1f)] // Asegura que el valor esté entre 0 y 1
+        [Range(0f, 1f)] // Asegura que el valor estï¿½ entre 0 y 1
         public float chance;
     }
 
@@ -39,13 +39,13 @@ public class PowerUpManager : MonoBehaviour
     [SerializeField] private float smallPaddleScale = 0.5f;
 
     [Header("Magnet Power-Up Settings")]
-    [SerializeField] private int maxMagnetUses = 5;
+    [SerializeField] private int maxMagnetUses = 6;
 
     [Header("God Mode Settings")]
     [SerializeField] private float godModeDuration = 5f;
 
     private bool hasNextLevelPowerUpBeenDroppedThisLevel = false;
-    [SerializeField] private float nextLevelDropChance = 0.1f; // Probabilidad específica para NextLevel
+    [SerializeField] private float nextLevelDropChance = 0.1f; // Probabilidad especï¿½fica para NextLevel
 
     [Header("Rocket Settings")]
     [SerializeField] private GameObject rocketPrefab;
@@ -94,7 +94,7 @@ public class PowerUpManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Bola no encontrada. Asegúrate de que tenga el tag 'Bola'.");
+            Debug.LogError("Bola no encontrada. Asegï¿½rate de que tenga el tag 'Bola'.");
         }
 
         GameObject paddle = GameObject.FindGameObjectWithTag("Paleta");
@@ -104,14 +104,14 @@ public class PowerUpManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Paleta no encontrada. Asegúrate de que tenga el tag 'Paleta'.");
+            Debug.LogError("Paleta no encontrada. Asegï¿½rate de que tenga el tag 'Paleta'.");
         }
         hasNextLevelPowerUpBeenDroppedThisLevel = false;
     }
 
     public void TryDropPowerUp(Vector3 position)
     {
-        
+
         activePowerUpItems.RemoveAll(item => item == null); // Limpiar la lista de objetos nulos
 
         if (Time.time < lastDropTime + dropCooldown)
@@ -119,23 +119,23 @@ public class PowerUpManager : MonoBehaviour
             return; // No dropear si no ha pasado el tiempo de cooldown
         }
 
-        // Lógica para el Power-Up Next Level (prioritaria si se cumplen las condiciones)
+        // Lï¿½gica para el Power-Up Next Level (prioritaria si se cumplen las condiciones)
         if (GameManager.Instance != null && GameManager.Instance.CanDropNextLevelPowerUp() && !hasNextLevelPowerUpBeenDroppedThisLevel)
         {
             if (Random.Range(0f, 1f) <= nextLevelDropChance)
             {
                 DropPowerUp(position, PowerUpType.NextLevel);
                 hasNextLevelPowerUpBeenDroppedThisLevel = true;
-                Debug.Log("¡Power-up Next Level dropeado!");
+                Debug.Log("ï¿½Power-up Next Level dropeado!");
                 return;
             }
         }
 
-        // Lógica para otros Power-Ups
+        // Lï¿½gica para otros Power-Ups
         if (Random.Range(0f, 1f) <= dropChance) // Probabilidad general de que *algo* dropee
         {
-            lastDropTime = Time.time; // Actualizar el tiempo del último drop
-            // Filtrar los power-ups normales (excluir NextLevel de esta selección)
+            lastDropTime = Time.time; // Actualizar el tiempo del ï¿½ltimo drop
+            // Filtrar los power-ups normales (excluir NextLevel de esta selecciï¿½n)
             List<PowerUpDropChance> normalPowerUps = new List<PowerUpDropChance>();
             foreach (var item in individualDropChances)
             {
@@ -145,7 +145,7 @@ public class PowerUpManager : MonoBehaviour
                 }
             }
 
-            // Calcular el total de las "chances" para la normalización
+            // Calcular el total de las "chances" para la normalizaciï¿½n
             float totalChance = 0f;
             foreach (var item in normalPowerUps)
             {
@@ -193,7 +193,7 @@ public class PowerUpManager : MonoBehaviour
     {
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.addScore(1000);
+            GameManager.Instance.addScore(1000, "PowerUp");
         }
 
         switch (type)
@@ -235,7 +235,7 @@ public class PowerUpManager : MonoBehaviour
         {
             if (powerBallCoroutine != null) StopCoroutine(powerBallCoroutine);
             powerBallCoroutine = StartCoroutine(DeactivatePowerBallAfterTime());
-            Debug.Log("PowerBall duración reiniciada!");
+            Debug.Log("PowerBall duraciï¿½n reiniciada!");
             return;
         }
 
@@ -277,7 +277,7 @@ public class PowerUpManager : MonoBehaviour
         {
             if (bigPaddleCoroutine != null) StopCoroutine(bigPaddleCoroutine);
             bigPaddleCoroutine = StartCoroutine(DeactivateBigPaddleAfterTime());
-            Debug.Log("Big Paddle duración reiniciada!");
+            Debug.Log("Big Paddle duraciï¿½n reiniciada!");
             return;
         }
 
@@ -318,7 +318,7 @@ public class PowerUpManager : MonoBehaviour
         {
             if (smallPaddleCoroutine != null) StopCoroutine(smallPaddleCoroutine);
             smallPaddleCoroutine = StartCoroutine(DeactivateSmallPaddleAfterTime());
-            Debug.Log("Small Paddle duración reiniciada!");
+            Debug.Log("Small Paddle duraciï¿½n reiniciada!");
             return;
         }
 
@@ -391,7 +391,7 @@ public class PowerUpManager : MonoBehaviour
         if (isMagnetActive)
         {
             currentMagnetUses--;
-            Debug.Log($"Uso de imán restante: {currentMagnetUses}");
+            Debug.Log($"Uso de imï¿½n restante: {currentMagnetUses}");
             if (currentMagnetUses <= 0)
             {
                 DeactivateMagnet();
@@ -421,7 +421,7 @@ public class PowerUpManager : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.addLife();
-            Debug.Log("¡Power-up de vida extra activado!");
+            Debug.Log("ï¿½Power-up de vida extra activado!");
         }
     }
 
@@ -431,7 +431,7 @@ public class PowerUpManager : MonoBehaviour
         if (GameManager.Instance != null)
         {
             GameManager.Instance.GoToNextLevel();
-            Debug.Log("¡Power-up Next Level activado!");
+            Debug.Log("ï¿½Power-up Next Level activado!");
         }
     }
 

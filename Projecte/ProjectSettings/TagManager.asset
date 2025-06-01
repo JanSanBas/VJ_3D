@@ -11,6 +11,12 @@ TagManager:
   - Paleta
   - GameManager
   - PowerUp
+
+  - Gato
+  - Elefante
+  - Perro
+  - "Ping\xFCino"
+  - Cuervo
   - Rocket
   layers:
   - Default

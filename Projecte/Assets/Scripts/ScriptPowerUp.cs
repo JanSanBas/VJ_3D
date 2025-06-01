@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -55,7 +55,7 @@ public class PowerUpItem : MonoBehaviour
                 case PowerUpType.NextLevel:
                     renderer.material.color = Color.black;
                     break;
-                case PowerUpType.GodMode: // ¡Nuevo caso!
+                case PowerUpType.GodMode: // ï¿½Nuevo caso!
                     renderer.material.color = new Color(1f, 0.5f, 0f); // Naranja o Dorado
                     break;
                 case PowerUpType.Rocket:
@@ -90,7 +90,7 @@ public class PowerUpItem : MonoBehaviour
                 case PowerUpType.NextLevel:
                     textMesh.text = "NL";
                     break;
-                case PowerUpType.GodMode: // ¡Nuevo caso!
+                case PowerUpType.GodMode: // ï¿½Nuevo caso!
                     textMesh.text = "GM"; // Texto para God Mode
                     break;
                 case PowerUpType.Rocket:
@@ -102,7 +102,7 @@ public class PowerUpItem : MonoBehaviour
 
     private IEnumerator MoveDown()
     {
-        while (transform.position.z > -10f) // Límite inferior
+        while (transform.position.z > -10f) // Lï¿½mite inferior
         {
             transform.Translate(Vector3.back * fallSpeed * Time.deltaTime);
             yield return null;
