@@ -68,6 +68,6 @@ MonoBehaviour:
   normalBallMaterial: {fileID: 2100000, guid: d1a7a11703b15554eb1e09a94ce6a47d, type: 2}
   bigPaddleScale: 1.5
   smallPaddleScale: 0.5
-  maxMagnetUses: 5
+  maxMagnetUses: 6
   godModeDuration: 5
   nextLevelDropChance: 0.1
