@@ -7670,6 +7670,7 @@ MonoBehaviour:
   powerUp: {fileID: 1419275801}
   fail: {fileID: 1419275798}
   hitPaleta: {fileID: 1419275799}
+  hitRocket: {fileID: 8300000, guid: 4c91c14f932cb5a449a62fb926fe211b, type: 3}
   panelDerrota: {fileID: 1855385008}
   fadeDuration: 1.5
   textoDerrota: {fileID: 1855385006}

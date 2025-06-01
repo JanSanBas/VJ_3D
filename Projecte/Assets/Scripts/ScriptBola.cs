@@ -33,6 +33,12 @@ public class ScriptBola : MonoBehaviour
 
     [SerializeField] private Coroutine godModeDuration;
 
+    [Tooltip("Velocidad inicial de la bola cuando se lanza.")]
+    public float initialSpeed = 10f; // Asegúrate de que esta variable existe y está configurada
+
+    [Tooltip("Velocidad mínima en el eje Z (vertical) para evitar que la bola se atasque.")]
+    public float minVerticalSpeed = 2f; // Puedes ajustar este valor en el Inspector. ¡Empieza con 1f o 2f!
+
     // Start is called before the first frame update
     void Start()
     {
@@ -139,6 +145,55 @@ public class ScriptBola : MonoBehaviour
         {
             godMode = !godMode;
             updatePaletaCollision();
+        }
+
+        EnsureMinimumVerticalSpeed();
+        MaintainConstantSpeed();
+    }
+
+    private void EnsureMinimumVerticalSpeed()
+    {
+        Vector3 currentVelocity = rb.velocity;
+
+        // Comprueba si la componente Z (vertical) de la velocidad es muy pequeña
+        if (Mathf.Abs(currentVelocity.z) < minVerticalSpeed)
+        {
+            // Determina la dirección original de la bola en Z (+1 para adelante, -1 para atrás)
+            float signZ = Mathf.Sign(currentVelocity.z);
+
+            // Si la velocidad Z es exactamente 0 (e.g., al inicio, o si rebotó perfectamente horizontal)
+            if (signZ == 0)
+            {
+                // Dale una dirección aleatoria inicial (+ o -) para evitar el estancamiento
+                signZ = (Random.value > 0.5f) ? 1f : -1f;
+            }
+
+            // Asigna la velocidad mínima en Z, manteniendo la dirección original
+            currentVelocity.z = signZ * minVerticalSpeed;
+
+            // Aplica la nueva velocidad al Rigidbody. La función MaintainConstantSpeed
+            // se encargará de normalizar la magnitud total.
+            rb.velocity = currentVelocity;
+        }
+    }
+
+    private void MaintainConstantSpeed()
+    {
+        // Esto asegura que la bola siempre se mueva a una velocidad constante (initialSpeed)
+        // después de cualquier rebote o ajuste.
+        // Esto es útil para evitar que la bola se acelere o desacelere con rebotes angulados.
+
+        // Asegúrate de que la bola no esté totalmente quieta para evitar dividir por cero.
+        if (rb.velocity.magnitude > 0.1f) // Usa un pequeño umbral para evitar errores de flotante
+        {
+            // Normaliza la dirección actual y multiplica por la velocidad deseada.
+            rb.velocity = rb.velocity.normalized * initialSpeed;
+        }
+        else // Si la bola está casi quieta, dale un empujón inicial
+        {
+            // Esto es un caso de seguridad, por si la bola se detiene por completo.
+            // Puedes ajustarlo para que se lance hacia una dirección específica o aleatoria.
+            rb.velocity = new Vector3(0, 0, initialSpeed); // Lanzarla hacia adelante como ejemplo
         }
     }
 

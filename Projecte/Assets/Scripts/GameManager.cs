@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     public AudioSource fail;
     public AudioSource hitPaleta;
 
+    public AudioClip hitRocket; // <-- ¡Cambiado a AudioClip!
+
     public static GameManager Instance;
 
     [Header("Pantalla de derrota")]
