@@ -57,7 +57,7 @@ public class ScriptBola : MonoBehaviour
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
 
-       direction = new Vector3(0, 0, 1).normalized;
+        direction = new Vector3(0, 0, 1).normalized;
         // ApplyVelocity(); // La velocidad se aplica solo cuando el juego empieza
 
         GameObject paddleObj = GameObject.FindGameObjectWithTag("Paleta");
@@ -84,7 +84,7 @@ public class ScriptBola : MonoBehaviour
         {
             if (paleta != null)
             {
-               transform.position = new Vector3(paleta.position.x, transform.position.y, paleta.position.z + 0.76f);
+                transform.position = new Vector3(paleta.position.x, transform.position.y, paleta.position.z + 0.76f);
             }
 
             if (Input.GetKeyUp(KeyCode.Space))
@@ -99,7 +99,8 @@ public class ScriptBola : MonoBehaviour
             transform.position = paleta.position + offsetFromPaddle;
             rb.velocity = Vector3.zero; // Asegurar que no se mueva por su cuenta
 
-            if (Input.GetKeyDown(KeyCode.Space)) {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
                 ReleaseBall(); // Liberar la bola
             }
         }
@@ -180,6 +181,28 @@ public class ScriptBola : MonoBehaviour
         else if (collision.gameObject.CompareTag("Cubo"))
         {
             collisionWithCubo(collision);
+        }
+
+        else if (collision.gameObject.CompareTag("Gato"))
+        {
+            collisionWithGato(collision);
+        }
+
+        else if (collision.gameObject.CompareTag("Elefante"))
+        {
+            collisionWithElefante(collision);
+        }
+        else if (collision.gameObject.CompareTag("Perro"))
+        {
+            collisionWithPerro(collision);
+        }
+        else if (collision.gameObject.CompareTag("Pingüino"))
+        {
+            collisionWithPinguino(collision);
+        }
+        else if (collision.gameObject.CompareTag("Cuervo"))
+        {
+            collisionWithCuervo(collision);
         }
     }
 
@@ -277,7 +300,7 @@ public class ScriptBola : MonoBehaviour
             ScriptCube cubeScript = collision.gameObject.GetComponent<ScriptCube>();
             if (cubeScript != null)
             {
-                cubeScript.collisionWithBall();
+                cubeScript.collisionWithBall("Cubo");
             }
 
             if (!isPowerBallActive) // Si PowerBall NO est� activo, la bola rebota.
@@ -288,14 +311,147 @@ public class ScriptBola : MonoBehaviour
                 float randomAngleOffset = Random.Range(-5f, 5f);
                 direction = Quaternion.Euler(0, randomAngleOffset, 0) * direction;
                 direction.Normalize();
-             }
-            collision.gameObject.GetComponent<ScriptCube>().collisionWithBall();
+            }
+            collision.gameObject.GetComponent<ScriptCube>().collisionWithBall("Cubo");
             ApplyVelocity();
             lastBounceTime = Time.time;
         }
     }
 
+    void collisionWithGato(Collision collision)
+    {
+        if (Time.time - lastBounceTime > bounceCooldown)
+        {
+            if (collision.gameObject == null) return;
 
+            ScriptCube cubeScript = collision.gameObject.GetComponent<ScriptCube>();
+            if (cubeScript != null)
+            {
+                cubeScript.collisionWithBall("Gato");
+            }
+
+            if (!isPowerBallActive) // Si PowerBall NO est� activo, la bola rebota.
+            {
+                ContactPoint contact = collision.contacts[0];
+                Vector3 normal = contact.normal;
+                direction = Vector3.Reflect(direction, normal).normalized;
+                float randomAngleOffset = Random.Range(-5f, 5f);
+                direction = Quaternion.Euler(0, randomAngleOffset, 0) * direction;
+                direction.Normalize();
+            }
+            collision.gameObject.GetComponent<ScriptCube>().collisionWithBall("Gato");
+            ApplyVelocity();
+            lastBounceTime = Time.time;
+        }
+    }
+
+    void collisionWithElefante(Collision collision)
+    {
+        if (Time.time - lastBounceTime > bounceCooldown)
+        {
+            if (collision.gameObject == null) return;
+
+            ScriptCube cubeScript = collision.gameObject.GetComponent<ScriptCube>();
+            if (cubeScript != null)
+            {
+                cubeScript.collisionWithBall("Elefante");
+            }
+
+            if (!isPowerBallActive) // Si PowerBall NO est� activo, la bola rebota.
+            {
+                ContactPoint contact = collision.contacts[0];
+                Vector3 normal = contact.normal;
+                direction = Vector3.Reflect(direction, normal).normalized;
+                float randomAngleOffset = Random.Range(-5f, 5f);
+                direction = Quaternion.Euler(0, randomAngleOffset, 0) * direction;
+                direction.Normalize();
+            }
+            collision.gameObject.GetComponent<ScriptCube>().collisionWithBall("Elefante");
+            ApplyVelocity();
+            lastBounceTime = Time.time;
+        }
+    }
+
+    void collisionWithPerro(Collision collision)
+    {
+        if (Time.time - lastBounceTime > bounceCooldown)
+        {
+            if (collision.gameObject == null) return;
+
+            ScriptCube cubeScript = collision.gameObject.GetComponent<ScriptCube>();
+            if (cubeScript != null)
+            {
+                cubeScript.collisionWithBall("Perro");
+            }
+
+            if (!isPowerBallActive) // Si PowerBall NO est� activo, la bola rebota.
+            {
+                ContactPoint contact = collision.contacts[0];
+                Vector3 normal = contact.normal;
+                direction = Vector3.Reflect(direction, normal).normalized;
+                float randomAngleOffset = Random.Range(-5f, 5f);
+                direction = Quaternion.Euler(0, randomAngleOffset, 0) * direction;
+                direction.Normalize();
+            }
+            collision.gameObject.GetComponent<ScriptCube>().collisionWithBall("Perro");
+            ApplyVelocity();
+            lastBounceTime = Time.time;
+        }
+    }
+
+    void collisionWithPinguino(Collision collision)
+    {
+        if (Time.time - lastBounceTime > bounceCooldown)
+        {
+            if (collision.gameObject == null) return;
+
+            ScriptCube cubeScript = collision.gameObject.GetComponent<ScriptCube>();
+            if (cubeScript != null)
+            {
+                cubeScript.collisionWithBall("Pingüino");
+            }
+
+            if (!isPowerBallActive) // Si PowerBall NO est� activo, la bola rebota.
+            {
+                ContactPoint contact = collision.contacts[0];
+                Vector3 normal = contact.normal;
+                direction = Vector3.Reflect(direction, normal).normalized;
+                float randomAngleOffset = Random.Range(-5f, 5f);
+                direction = Quaternion.Euler(0, randomAngleOffset, 0) * direction;
+                direction.Normalize();
+            }
+            collision.gameObject.GetComponent<ScriptCube>().collisionWithBall("Pingüino");
+            ApplyVelocity();
+            lastBounceTime = Time.time;
+        }
+    }
+
+    void collisionWithCuervo(Collision collision)
+    {
+        if (Time.time - lastBounceTime > bounceCooldown)
+        {
+            if (collision.gameObject == null) return;
+
+            ScriptCube cubeScript = collision.gameObject.GetComponent<ScriptCube>();
+            if (cubeScript != null)
+            {
+                cubeScript.collisionWithBall("Cuervo");
+            }
+
+            if (!isPowerBallActive) // Si PowerBall NO est� activo, la bola rebota.
+            {
+                ContactPoint contact = collision.contacts[0];
+                Vector3 normal = contact.normal;
+                direction = Vector3.Reflect(direction, normal).normalized;
+                float randomAngleOffset = Random.Range(-5f, 5f);
+                direction = Quaternion.Euler(0, randomAngleOffset, 0) * direction;
+                direction.Normalize();
+            }
+            collision.gameObject.GetComponent<ScriptCube>().collisionWithBall("Cuervo");
+            ApplyVelocity();
+            lastBounceTime = Time.time;
+        }
+    }
 
     public void SetPowerBall(bool active)
     {
@@ -407,4 +563,3 @@ public class ScriptBola : MonoBehaviour
         Debug.Log("God Mode desactivado.");
     }
 }
-

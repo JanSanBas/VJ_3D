@@ -120,6 +120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameStarted: 0
+  gameFinished: 0
   godMode: 0
   speed: 10
   maxBounceAngle: 75
