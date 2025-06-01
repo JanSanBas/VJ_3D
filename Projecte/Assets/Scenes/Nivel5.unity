@@ -10314,6 +10314,9 @@ MonoBehaviour:
   destroyCube: {fileID: 1067452791}
   destroyCat: {fileID: 1067452796}
   destroyElephant: {fileID: 0}
+  destroyDog: {fileID: 0}
+  destroyPenguin: {fileID: 0}
+  destroyCrow: {fileID: 0}
   powerUp: {fileID: 1067452795}
   fail: {fileID: 1067452792}
   hitPaleta: {fileID: 1067452793}
@@ -10340,9 +10343,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 202c101ab36f96b4a8ee00fa20670f51, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 75b03859597df794780693d9c7ca2b3d, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.3
+  m_Volume: 0.25
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -22538,6 +22541,10 @@ PrefabInstance:
     - target: {fileID: 6133781041798331701, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
       propertyPath: dropChance
       value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133781041798331701, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
+      propertyPath: maxMagnetUses
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6133781041798331701, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
       propertyPath: powerUpPrefab

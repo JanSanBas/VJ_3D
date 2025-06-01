@@ -175,7 +175,7 @@ public class GameManager : MonoBehaviour
     {
         if (numeroPuntosText != null)
         {
-            numeroPuntosText.text = score.ToString("D6");
+            numeroPuntosText.text = score.ToString("D7");
         }
 
         if (numeroVidasText != null)
@@ -324,6 +324,9 @@ public class GameManager : MonoBehaviour
     {
         if (scriptPaleta != null)
             scriptPaleta.playing = false;
+
+        if (PowerUpManager.Instance != null)
+            PowerUpManager.Instance.ResetPowerUps();
 
         if (scriptBola != null)
             scriptBola.gameFinished = true;

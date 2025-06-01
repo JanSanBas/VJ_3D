@@ -68,6 +68,14 @@ MonoBehaviour:
   normalBallMaterial: {fileID: 2100000, guid: d1a7a11703b15554eb1e09a94ce6a47d, type: 2}
   bigPaddleScale: 1.5
   smallPaddleScale: 0.5
-  maxMagnetUses: 6
+  maxMagnetUses: 5
   godModeDuration: 5
   nextLevelDropChance: 0.1
+  rocketPrefab: {fileID: 3244350561022305153, guid: 899ad38e2d095c442ab31e55bae6ebf9, type: 3}
+  maxRocketSalvos: 3
+  rocketFireInterval: 2
+  rocketOffset: 0.5
+  ui: {fileID: 0}
+  tPowerBall: 0
+  tBigPaddle: 0
+  tSmallPaddle: 0

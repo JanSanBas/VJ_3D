@@ -55,7 +55,7 @@ public class PowerUpItem : MonoBehaviour
                 case PowerUpType.NextLevel:
                     renderer.material.color = Color.black;
                     break;
-                case PowerUpType.GodMode: // �Nuevo caso!
+                case PowerUpType.GodMode:
                     renderer.material.color = new Color(1f, 0.5f, 0f); // Naranja o Dorado
                     break;
                 case PowerUpType.Rocket:
