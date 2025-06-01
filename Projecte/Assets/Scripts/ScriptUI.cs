@@ -61,6 +61,6 @@ public class ScriptUI : MonoBehaviour
 
     public void SetUsosCohetes(int usos)
     {
-        usosCohetes.text = usos > 0 ? usos.ToString() : "0";
+        usosCohetes.text = usos > 0 ? (usos-1).ToString() : "0";
     }
 }
