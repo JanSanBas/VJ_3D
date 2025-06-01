@@ -49,8 +49,8 @@ public class PowerUpManager : MonoBehaviour
 
     [Header("Rocket Settings")]
     [SerializeField] private GameObject rocketPrefab;
-    [SerializeField] private int maxRocketSalvos = 3; // Número de ráfagas por power-up
-    [SerializeField] private float rocketFireInterval = 2f; // Tiempo entre ráfagas
+    [SerializeField] private int maxRocketSalvos = 3; // Nï¿½mero de rï¿½fagas por power-up
+    [SerializeField] private float rocketFireInterval = 2f; // Tiempo entre rï¿½fagas
     [SerializeField] private float rocketOffset = 0.5f; // Distancia desde los extremos de la paleta
 
     private bool isRocketActive = false;
@@ -368,7 +368,7 @@ public class PowerUpManager : MonoBehaviour
     // --- Magnet Logic ---
     private void ActivateMagnet()
     {
-        // Forzar la desactivación primero para limpiar el estado
+        // Forzar la desactivaciï¿½n primero para limpiar el estado
         if (isMagnetActive)
         {
             DeactivateMagnet();
@@ -483,7 +483,7 @@ public class PowerUpManager : MonoBehaviour
     {
         if (isRocketActive)
         {
-            // Si ya está activo, reiniciar el conteo
+            // Si ya estï¿½ activo, reiniciar el conteo
             if (rocketCoroutine != null) StopCoroutine(rocketCoroutine);
             currentRocketSalvos = maxRocketSalvos;
             rocketCoroutine = StartCoroutine(RocketCoroutine());
@@ -520,7 +520,7 @@ public class PowerUpManager : MonoBehaviour
 
         Vector3 paddlePosition = paddleScript.transform.position;
 
-        // Obtener los límites reales de la paleta usando su Renderer
+        // Obtener los lï¿½mites reales de la paleta usando su Renderer
         Renderer paddleRenderer = paddleScript.GetComponent<Renderer>();
         if (paddleRenderer != null)
         {
@@ -535,19 +535,19 @@ public class PowerUpManager : MonoBehaviour
             Instantiate(rocketPrefab, leftRocketPos, Quaternion.identity);
             Instantiate(rocketPrefab, rightRocketPos, Quaternion.identity);
 
-            Debug.Log($"Cohetes disparados desde bordes de paleta! Escala actual: {paddleScript.transform.localScale.x}. Ráfagas restantes: {currentRocketSalvos - 1}");
+            Debug.Log($"Cohetes disparados desde bordes de paleta! Escala actual: {paddleScript.transform.localScale.x}. Rï¿½fagas restantes: {currentRocketSalvos - 1}");
         }
         else
         {
-            // Fallback: si no hay renderer, usar el método anterior como respaldo
-            Debug.LogWarning("No se encontró Renderer en la paleta, usando cálculo aproximado");
+            // Fallback: si no hay renderer, usar el mï¿½todo anterior como respaldo
+            Debug.LogWarning("No se encontrï¿½ Renderer en la paleta, usando cï¿½lculo aproximado");
             float paddleWidth = paddleScript.transform.localScale.x * 2f;
             Vector3 leftRocketPos = paddlePosition + new Vector3(-paddleWidth / 2f, 0.2f, 0.3f);
             Vector3 rightRocketPos = paddlePosition + new Vector3(paddleWidth / 2f, 0.2f, 0.3f);
 
             Instantiate(rocketPrefab, leftRocketPos, Quaternion.identity);
             Instantiate(rocketPrefab, rightRocketPos, Quaternion.identity);
-            Debug.Log($"Cohetes disparados! Ráfagas restantes: {currentRocketSalvos - 1}");
+            Debug.Log($"Cohetes disparados! Rï¿½fagas restantes: {currentRocketSalvos - 1}");
         }
     }
 

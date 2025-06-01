@@ -59,7 +59,7 @@ public class PowerUpItem : MonoBehaviour
                     renderer.material.color = new Color(1f, 0.5f, 0f); // Naranja o Dorado
                     break;
                 case PowerUpType.Rocket:
-                    renderer.material.color = new Color(0.8f, 0.4f, 0f); // Color marrón/naranja oscuro
+                    renderer.material.color = new Color(0.8f, 0.4f, 0f); // Color marrï¿½n/naranja oscuro
                     break;
             }
         }
