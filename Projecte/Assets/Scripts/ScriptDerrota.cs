@@ -17,6 +17,9 @@ public class ScriptDerrota : MonoBehaviour
     public AudioSource clickSound;
     public AudioSource hoverSound;
 
+    public bool isShowing = false; // Indica si la pantalla de derrota está visible/activa
+
+
     void Start()
     {
         // Inicialmente oculto e invisible
@@ -26,10 +29,14 @@ public class ScriptDerrota : MonoBehaviour
 
         if (textoDerrota != null)
             textoDerrota.localScale = Vector3.zero;
+
+        isShowing = false;
+
     }
 
     public void MostrarPantallaDerrota()
     {
+        isShowing = true;
         StartCoroutine(FadeInUI());
     }
 
@@ -96,6 +103,7 @@ public class ScriptDerrota : MonoBehaviour
 
     public void Inicio()
     {
+        isShowing = false;
         EventSystem.current.SetSelectedGameObject(null);
         GameManager.Instance.Reset();
         StartCoroutine(PlaySoundAndLoadScene("MainMenu"));
@@ -103,6 +111,7 @@ public class ScriptDerrota : MonoBehaviour
 
     public void Sortir()
     {
+        isShowing = false;
         EventSystem.current.SetSelectedGameObject(null);
         GameManager.Instance.Reset();
         Application.Quit();
