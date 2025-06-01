@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8602722987941810357
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3620316533513003043}
+  - component: {fileID: 6133781041798331701}
+  m_Layer: 0
+  m_Name: PowerUpManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3620316533513003043
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8602722987941810357}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6133781041798331701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8602722987941810357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b62a0a9c1d72374fa2839564c7e6899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier:
+  dropChance: 0.1
+  powerUpSpeed: 2
+  powerUpDuration: 10
+  dropCooldown: 0.5
+  powerUpPrefabs:
+  - type: 0
+    prefab: {fileID: 2983714734401281677, guid: 57aaac57737dfa443a87feb51ba8e8f3, type: 3}
+    rotationOffset: {x: -180, y: 0, z: 270}
+  - type: 1
+    prefab: {fileID: 8427365525837783028, guid: 94443479886ccd546a319424ae4336f4, type: 3}
+    rotationOffset: {x: 0, y: -90, z: -90}
+  - type: 2
+    prefab: {fileID: 8449933422368769093, guid: 108fdff230d037642ad26254375bfb92, type: 3}
+    rotationOffset: {x: 0, y: -90, z: 90}
+  - type: 3
+    prefab: {fileID: 1900352554319058277, guid: 4a14f3715dec1c142b141d921fec83be, type: 3}
+    rotationOffset: {x: -90, y: 0, z: 0}
+  - type: 4
+    prefab: {fileID: 3594084360383032624, guid: 5713bf071433bb1468e15072d27270af, type: 3}
+    rotationOffset: {x: 0, y: 0, z: 0}
+  - type: 5
+    prefab: {fileID: 3632520984611360323, guid: 09bb51a6707a55640bed530656c27d19, type: 3}
+    rotationOffset: {x: 90, y: 0, z: 180}
+  - type: 6
+    prefab: {fileID: 917057067168574108, guid: 79cc42a55516a70428755269f82b1acf, type: 3}
+    rotationOffset: {x: 0, y: 0, z: 0}
+  - type: 7
+    prefab: {fileID: 1377161149414801232, guid: 28e534118451fba4b8f384ef6759f210, type: 3}
+    rotationOffset: {x: -90, y: 0, z: 0}
+  - type: 8
+    prefab: {fileID: 7764072314287334334, guid: b0a36222943be4e4aa10583b14f32e77, type: 3}
+    rotationOffset: {x: 0, y: 90, z: 0}
+  individualDropChances:
+  - type: 0
+    chance: 0.2
+  - type: 1
+    chance: 0.2
+  - type: 2
+    chance: 0.1
+  - type: 3
+    chance: 0.15
+  - type: 4
+    chance: 0.15
+  - type: 5
+    chance: 0.1
+  - type: 7
+    chance: 0.05
+  - type: 8
+    chance: 0.15
+  powerBallMaterial: {fileID: 2100000, guid: b0cd5b9e9296eab48ba72a10fddc3de4, type: 2}
+  normalBallMaterial: {fileID: 2100000, guid: d1a7a11703b15554eb1e09a94ce6a47d, type: 2}
+  bigPaddleScale: 1.5
+  smallPaddleScale: 0.5
+  maxMagnetUses: 6
+  godModeDuration: 5
+  nextLevelDropChance: 0.1
+  rocketPrefab: {fileID: 8990465010844411958, guid: a34e60fa7d136e149a7497dbc8cf7d64, type: 3}
+  maxRocketSalvos: 3
+  rocketFireInterval: 2
+  rocketOffset: 0.5

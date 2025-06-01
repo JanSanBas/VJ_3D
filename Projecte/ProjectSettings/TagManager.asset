@@ -10,6 +10,13 @@ TagManager:
   - Cubo
   - Paleta
   - GameManager
+  - PowerUp
+  - "Ping\xFCino"
+  - Perro
+  - Gato
+  - Elefante
+  - Cuervo
+  - Rocket
   layers:
   - Default
   - TransparentFX
