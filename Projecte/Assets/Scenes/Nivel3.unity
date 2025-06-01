@@ -9402,7 +9402,7 @@ PrefabInstance:
     - target: {fileID: 6133781041798331701, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
       propertyPath: powerUpPrefab
       value: 
-      objectReference: {fileID: 2021230520}
+      objectReference: {fileID: 0}
     - target: {fileID: 8602722987941810357, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
       propertyPath: m_Name
       value: PowerUpManager
@@ -11382,68 +11382,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2246495736027103809, guid: 373eb76729c003d49a95aec9457ee755, type: 3}
   m_PrefabInstance: {fileID: 2018870337}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &2021230519
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 565682916850902846, guid: 8fbddba0471137a4ba37bf3fd4eb23e3, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 565682916850902846, guid: 8fbddba0471137a4ba37bf3fd4eb23e3, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 565682916850902846, guid: 8fbddba0471137a4ba37bf3fd4eb23e3, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 565682916850902846, guid: 8fbddba0471137a4ba37bf3fd4eb23e3, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 565682916850902846, guid: 8fbddba0471137a4ba37bf3fd4eb23e3, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 565682916850902846, guid: 8fbddba0471137a4ba37bf3fd4eb23e3, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 565682916850902846, guid: 8fbddba0471137a4ba37bf3fd4eb23e3, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 565682916850902846, guid: 8fbddba0471137a4ba37bf3fd4eb23e3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 565682916850902846, guid: 8fbddba0471137a4ba37bf3fd4eb23e3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 565682916850902846, guid: 8fbddba0471137a4ba37bf3fd4eb23e3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7076833383818394229, guid: 8fbddba0471137a4ba37bf3fd4eb23e3, type: 3}
-      propertyPath: m_Name
-      value: PowerUp
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 8fbddba0471137a4ba37bf3fd4eb23e3, type: 3}
---- !u!1 &2021230520 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7076833383818394229, guid: 8fbddba0471137a4ba37bf3fd4eb23e3, type: 3}
-  m_PrefabInstance: {fileID: 2021230519}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2026123229
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12153,4 +12091,3 @@ SceneRoots:
   - {fileID: 1978837311}
   - {fileID: 242723021}
   - {fileID: 1579862625}
-  - {fileID: 2021230519}
