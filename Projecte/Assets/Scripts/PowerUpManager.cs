@@ -17,15 +17,24 @@ public class PowerUpManager : MonoBehaviour
         public float chance;
     }
 
-    private List<GameObject> activePowerUpItems = new List<GameObject>();
+    [System.Serializable]
+    public class PowerUpPrefabEntry
+    {
+        public PowerUpType type;
+        public GameObject prefab;
+        public Vector3 rotationOffset = Vector3.zero;
+    }
+
 
     [Header("Power-Up General Settings")]
-    [SerializeField] private GameObject powerUpPrefab;
     [SerializeField] private float dropChance = 0.1f; // Probabilidad general de que *cualquier* power-up dropee
     [SerializeField] private float powerUpSpeed = 2f;
     [SerializeField] private float powerUpDuration = 10f;
     [SerializeField] private float dropCooldown = 0.5f; // Tiempo entre drops de power-ups
     private float lastDropTime = 0f;
+
+    [Header("Power-Up Prefabs")]
+    [SerializeField] private List<PowerUpPrefabEntry> powerUpPrefabs;
 
     [Header("Individual Power-Up Drop Chances")]
     [SerializeField] private List<PowerUpDropChance> individualDropChances; // Lista de probabilidades individuales
@@ -51,11 +60,12 @@ public class PowerUpManager : MonoBehaviour
     [SerializeField] private GameObject rocketPrefab;
     [SerializeField] private int maxRocketSalvos = 3; // N�mero de r�fagas por power-up
     [SerializeField] private float rocketFireInterval = 2f; // Tiempo entre r�fagas
-    [SerializeField] private float rocketOffset = 0.5f; // Distancia desde los extremos de la paleta
 
     private bool isRocketActive = false;
     private int currentRocketSalvos;
     private Coroutine rocketCoroutine;
+
+    private List<GameObject> activePowerUpItems = new List<GameObject>();
 
     // --- Variables de estado y coroutines (reducidas para God Mode) ---
     private bool isPowerBallActive = false;
@@ -190,16 +200,57 @@ public class PowerUpManager : MonoBehaviour
 
     private void DropPowerUp(Vector3 position, PowerUpType type)
     {
-        if (powerUpPrefab != null)
+        GameObject prefabToInstantiate = null;
+        Vector3 currentRotationOffset = Vector3.zero; // Offset de rotaci�n por defecto
+
+        // Buscar el prefab correspondiente al tipo
+        foreach (var entry in powerUpPrefabs)
         {
-            GameObject powerUp = Instantiate(powerUpPrefab, position, Quaternion.identity);
+            if (entry.type == type)
+            {
+                prefabToInstantiate = entry.prefab;
+                currentRotationOffset = entry.rotationOffset; // Obtener el offset de rotaci�n del prefab
+                break;
+            }
+        }
+
+        if (prefabToInstantiate != null)
+        {
+
+            Vector3 spawnPosition = position;
+            if (type == PowerUpType.PowerBall || type == PowerUpType.SmallPaddle || type == PowerUpType.BigPaddle || type == PowerUpType.NormalBall) // Añade aquí los tipos que necesiten ajuste
+            {
+                spawnPosition.y += 0.8f;
+            }
+            else if (type == PowerUpType.ExtraLife || type == PowerUpType.Magnet)
+            {
+                spawnPosition.y += 0.4f; // Ajuste para evitar clipping al dropear Power-Ups
+            }
+            else if (type == PowerUpType.GodMode || type == PowerUpType.NextLevel)
+            {
+                spawnPosition.y += 0.75f; // Ajuste para evitar clipping al dropear GodMode
+            }
+
+            GameObject powerUp = Instantiate(prefabToInstantiate, spawnPosition, Quaternion.identity); // prefabToInstantiate.transform.rotation
+
+            powerUp.transform.localEulerAngles = currentRotationOffset;
 
             PowerUpItem powerUpItem = powerUp.GetComponent<PowerUpItem>();
             if (powerUpItem != null)
             {
+                // Inicializar el PowerUpItem con su tipo y velocidad
                 powerUpItem.Initialize(type, powerUpSpeed);
                 activePowerUpItems.Add(powerUp);
             }
+            else
+            {
+                Debug.LogWarning($"El prefab para el PowerUpType {type} no tiene un componente PowerUpItem.");
+                Destroy(powerUp); // Destruir el objeto si no tiene el script correcto
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"No se encontr� un prefab asignado para el PowerUpType: {type}");
         }
     }
 
@@ -595,8 +646,8 @@ public class PowerUpManager : MonoBehaviour
             Vector3 rightRocketPos = new Vector3(paddleBounds.max.x, paddlePosition.y + 0.2f, paddlePosition.z + 0.3f);
 
             // Crear los cohetes en las posiciones exactas de los bordes
-            Instantiate(rocketPrefab, leftRocketPos, Quaternion.identity);
-            Instantiate(rocketPrefab, rightRocketPos, Quaternion.identity);
+            Instantiate(rocketPrefab, leftRocketPos, rocketPrefab.transform.rotation);
+            Instantiate(rocketPrefab, rightRocketPos, rocketPrefab.transform.rotation);
 
             Debug.Log($"Cohetes disparados desde bordes de paleta! Escala actual: {paddleScript.transform.localScale.x}. R�fagas restantes: {currentRocketSalvos - 1}");
         }
