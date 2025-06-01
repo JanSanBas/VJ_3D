@@ -32,6 +32,8 @@ public class GameManager : MonoBehaviour
     private static int persistentLevel = 1;
     private static bool isInitialized = false;
 
+    private bool isGamePaused = false;
+
     // Variables de instancia para la escena actual
     private int score;
     private int lives;
@@ -97,6 +99,11 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (isGamePaused) return;
+        {
+            
+        }
         // El conteo de hijos de GameManager se actualiza automáticamente
         // cuando los cubos son destruidos (ya que se destruye el GameObject hijo)
         int currentCubesCount = transform.childCount;
@@ -146,6 +153,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+    public void SetGamePaused(bool paused)
+    {
+        isGamePaused = paused;
+        Debug.Log($"Estado de pausa cambiado a: {paused}");
+    }
+
+    public bool IsGamePaused()
+    {
+        return isGamePaused;
+    }
+
     public void HabilitarControl()
     {
         controlHabilitado = true;
@@ -154,6 +173,8 @@ public class GameManager : MonoBehaviour
 
     public void addScore(int points, string type)
     {
+        if (isGamePaused) return;
+        
         if (destroyCube != null && type == "Cubo")
             destroyCube.Play();
         if (destroyCat != null && type == "Gato")
@@ -200,6 +221,8 @@ public class GameManager : MonoBehaviour
 
     public void reduceLives()
     {
+        if (isGamePaused) return;
+
         if (fail != null)
             fail.Play();
 
@@ -230,6 +253,8 @@ public class GameManager : MonoBehaviour
 
     public void addLife()
     {
+        if (isGamePaused) return;
+
         if (lives < 9)
         {
             lives++;

@@ -76,8 +76,8 @@ public class ScriptBola : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Si el juego no ha empezado, la bola se mueve con la paleta
-        if (gameFinished || !GameManager.Instance.controlHabilitado)
+        // Si el juego ha terminado, la bola se mueve con la paleta
+        if (gameFinished)
         {
             if (paleta != null)
             {
@@ -86,6 +86,24 @@ public class ScriptBola : MonoBehaviour
             }
             return;
         }
+
+        // Si el juego está pausado, no hacer nada (mantener posición actual)
+        if (GameManager.Instance != null && GameManager.Instance.IsGamePaused())
+        {
+            return; // Salir temprano, no procesar nada más
+        }
+
+        // Si el control no está habilitado pero el juego no está pausado (inicio del juego)
+        if (!GameManager.Instance.controlHabilitado)
+        {
+            if (paleta != null)
+            {
+                Vector3 posPaleta = paleta.position;
+                transform.position = new Vector3(posPaleta.x, transform.position.y, posPaleta.z + 0.75f);
+            }
+            return;
+        }
+
         if (!gameStarted)
         {
             if (paleta != null)
@@ -100,7 +118,7 @@ public class ScriptBola : MonoBehaviour
                 ApplyVelocity();
             }
         }
-        else if (isBallAttached) // Si la bola est� enganchada por el im�n
+        else if (isBallAttached) // Si la bola está enganchada por el imán
         {
             transform.position = paleta.position + offsetFromPaddle;
             rb.velocity = Vector3.zero; // Asegurar que no se mueva por su cuenta
@@ -137,7 +155,7 @@ public class ScriptBola : MonoBehaviour
             else
             {
                 GameManager.Instance.reduceLives(); // Llama al GameManager para reducir una vida
-                gameRestart(); // Reinicia la posici�n de la bola para la siguiente vida
+                gameRestart(); // Reinicia la posición de la bola para la siguiente vida
             }
         }
 

@@ -12,14 +12,14 @@ public class ScriptPausa : MonoBehaviour
 
     private bool juegoEnPausa = false;
 
-    [SerializeField] private GameObject primerBotonSeleccionado; // Para seleccionar el primer botón al abrir la pausa
 
     // Opcional: Audio para botones
     public AudioSource clickSound;
     public AudioSource hoverSound;
 
-    private string[] escenasExcluidas = { "MainMenu", "Credits" }; 
+    private string[] escenasExcluidas = { "MainMenu", "Credits" };
 
+    private bool isProcessingMenuTransition = false;
 
     [SerializeField] private ScriptDerrota scriptDerrota; // Referencia al script de derrota, si es necesario
 
@@ -102,6 +102,7 @@ public class ScriptPausa : MonoBehaviour
         // Deshabilitar el control del jugador a través del GameManager
         if (GameManager.Instance != null)
         {
+            GameManager.Instance.SetGamePaused(true);
             GameManager.Instance.controlHabilitado = false;
             // No reseteamos los power-ups activos ni los destruimos al pausar,
             // simplemente se congelarán porque Time.timeScale es 0.
@@ -114,12 +115,6 @@ public class ScriptPausa : MonoBehaviour
             panelPausa.interactable = true;
             panelPausa.blocksRaycasts = true;
         }
-
-        // Seleccionar el primer botón para navegación con teclado/gamepad
-        if (primerBotonSeleccionado != null)
-        {
-            EventSystem.current.SetSelectedGameObject(primerBotonSeleccionado);
-        }
     }
 
     public void ReanudarJuego()
@@ -131,6 +126,7 @@ public class ScriptPausa : MonoBehaviour
         // Habilitar el control del jugador a través del GameManager
         if (GameManager.Instance != null)
         {
+            GameManager.Instance.SetGamePaused(false);
             GameManager.Instance.controlHabilitado = true;
         }
 
@@ -153,29 +149,34 @@ public class ScriptPausa : MonoBehaviour
         ReanudarJuego(); // Simplemente reanuda el juego
     }
 
-    public IEnumerator OnClickSalirMenu()
+    public void OnClickSalirMenu()
     {
+        // Evitar múltiples clics mientras se procesa la transición
+        if (isProcessingMenuTransition) return;
 
-        clickSound?.Play(); // Reproducir sonido de click si está configurado
-        // IMPORTANTE: Resetear los datos persistentes SOLO al salir al menú
-        if (GameManager.Instance != null)
+        isProcessingMenuTransition = true;
+
+        // Reproducir sonido de click si está configurado
+        if (clickSound != null)
         {
-            GameManager.Instance.Reset();
+            clickSound.Play();
+            // Iniciar corrutina para esperar a que termine el sonido
+            StartCoroutine(WaitForSoundAndGoToMenu());
         }
-        Time.timeScale = 1f; // Asegurarse de que el tiempo se reanude antes de cargar la escena
-
-        yield return new WaitForSeconds(clickSound.clip.length);
-
-        SceneManager.LoadScene("MainMenu"); // Carga tu escena de menú principal
+        else
+        {
+            // Si no hay sonido, ir directamente al menú
+            GoToMainMenu();
+        }
     }
 
     public void OnClickSalirJuego()
     {
 
         // IMPORTANTE: Resetear los datos persistentes SOLO al salir del juego
-        clickSound?.Play(); // Reproducir sonido de click si está configurado
         if (GameManager.Instance != null)
         {
+            GameManager.Instance.SetGamePaused(false); // Asegurarse de que el juego no está pausado
             GameManager.Instance.Reset();
         }
         Application.Quit(); // Cierra la aplicación
@@ -188,5 +189,30 @@ public class ScriptPausa : MonoBehaviour
     {
         if (hoverSound != null)
             hoverSound.Play();
+    }
+
+    private IEnumerator WaitForSoundAndGoToMenu()
+    {
+        // Esperar a que termine el clip de audio
+        if (clickSound != null && clickSound.clip != null)
+        {
+            // Usar unscaledTime porque el juego está pausado (Time.timeScale = 0)
+            yield return new WaitForSecondsRealtime(clickSound.clip.length);
+        }
+
+        GoToMainMenu();
+    }
+
+    private void GoToMainMenu()
+    {
+        // IMPORTANTE: Resetear los datos persistentes SOLO al salir al menú
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.SetGamePaused(false); // Asegurarse de que el juego no está pausado
+            GameManager.Instance.Reset();
+        }
+        Time.timeScale = 1f; // Asegurarse de que el tiempo se reanude antes de cargar la escena
+
+        SceneManager.LoadScene("MainMenu"); // Carga tu escena de menú principal
     }
 }
