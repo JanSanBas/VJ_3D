@@ -24,7 +24,7 @@ public class ScriptBola : MonoBehaviour
 
     // --- Nuevas variables para el im�n ---
     private bool isMagnetPowerUpActive = false;
-    private bool isBallAttached = false;
+    public bool isBallAttached = false;
     private Vector3 offsetFromPaddle;
 
     // --- Nuevas variables para la liberaci�n controlada ---
@@ -460,10 +460,19 @@ public class ScriptBola : MonoBehaviour
 
     public void SetMagnetPowerUp(bool active) // M�todo para establecer el estado del im�n
     {
-        isMagnetPowerUpActive = active;
-        if (!active && isBallAttached) // Si el im�n se desactiva y la bola est� enganchada, liberarla
+        if (!active)
         {
-            ReleaseBall();
+            // Solo soltar la bola si el jugador ha soltado manualmente, no al reiniciar el imán
+            if (isMagnetPowerUpActive && isBallAttached)
+            {
+                // Aquí puedes optar por NO liberar la bola
+                Debug.Log("Imán desactivado, pero bola enganchada NO se suelta automáticamente.");
+            }
+            isMagnetPowerUpActive = false;
+        }
+        else
+        {
+            isMagnetPowerUpActive = true;
         }
     }
 
@@ -545,21 +554,28 @@ public class ScriptBola : MonoBehaviour
     public void ActivateGodMode(float duration)
     {
         if (godModeDuration != null)
-        {
             StopCoroutine(godModeDuration);
-        }
+
         godMode = true;
         updatePaletaCollision();
+
         godModeDuration = StartCoroutine(GodModeDurationRoutine(duration));
     }
 
     private IEnumerator GodModeDurationRoutine(float duration)
     {
-        yield return new WaitForSeconds(duration);
+        float t = duration;
+
+        while (t > 0)
+        {
+            PowerUpManager.Instance?.ui?.SetTiempoGodMode(t);
+            yield return null;
+            t -= Time.deltaTime;
+        }
+
         godMode = false;
         updatePaletaCollision();
-        godModeDuration = null; // Resetear la referencia de la coroutine
-
-        Debug.Log("God Mode desactivado.");
+        PowerUpManager.Instance?.ui?.SetTiempoGodMode(0);
+        godModeDuration = null;
     }
 }
