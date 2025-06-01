@@ -230,10 +230,13 @@ public class GameManager : MonoBehaviour
 
     public void addLife()
     {
-        lives++;
-        persistentLives = lives; // Guardar en datos persistentes
-        updateUI();
-        Debug.Log("¡Vida extra obtenida! Vidas restantes: " + lives);
+        if (lives < 9)
+        {
+            lives++;
+            persistentLives = lives; // Guardar en datos persistentes
+            updateUI();
+            Debug.Log("¡Vida extra obtenida! Vidas restantes: " + lives);
+        }
     }
 
 

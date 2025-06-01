@@ -1,5 +1,4 @@
-# Ignorar carpeta Binari (builds)
-Binari/
+/Binari
 
 # Ignorar archivos y carpetas de Unity
 Projecte/[Ll]ibrary/
