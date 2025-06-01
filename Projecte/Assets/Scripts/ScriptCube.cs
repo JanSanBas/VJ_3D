@@ -60,7 +60,7 @@ public class ScriptCube : MonoBehaviour
         // PowerUpManager decidirá si puede dropear el Next Level basado en el conteo de cubos del GameManager
         if (PowerUpManager.Instance != null)
         {
-            PowerUpManager.Instance.TryDropPowerUp(transform.position);
+            PowerUpManager.Instance.TryDropPowerUp(new Vector3(transform.position.x, 0.5f, transform.position.z));
         }
 
         Destroy(gameObject);

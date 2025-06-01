@@ -58,6 +58,9 @@ public class PowerUpItem : MonoBehaviour
                 case PowerUpType.GodMode: // ï¿½Nuevo caso!
                     renderer.material.color = new Color(1f, 0.5f, 0f); // Naranja o Dorado
                     break;
+                case PowerUpType.Rocket:
+                    renderer.material.color = new Color(0.8f, 0.4f, 0f); // Color marrón/naranja oscuro
+                    break;
             }
         }
 
@@ -89,6 +92,9 @@ public class PowerUpItem : MonoBehaviour
                     break;
                 case PowerUpType.GodMode: // ï¿½Nuevo caso!
                     textMesh.text = "GM"; // Texto para God Mode
+                    break;
+                case PowerUpType.Rocket:
+                    textMesh.text = "R"; // Texto para Rocket
                     break;
             }
         }

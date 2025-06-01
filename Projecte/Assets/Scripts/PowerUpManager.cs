@@ -47,6 +47,16 @@ public class PowerUpManager : MonoBehaviour
     private bool hasNextLevelPowerUpBeenDroppedThisLevel = false;
     [SerializeField] private float nextLevelDropChance = 0.1f; // Probabilidad especï¿½fica para NextLevel
 
+    [Header("Rocket Settings")]
+    [SerializeField] private GameObject rocketPrefab;
+    [SerializeField] private int maxRocketSalvos = 3; // Número de ráfagas por power-up
+    [SerializeField] private float rocketFireInterval = 2f; // Tiempo entre ráfagas
+    [SerializeField] private float rocketOffset = 0.5f; // Distancia desde los extremos de la paleta
+
+    private bool isRocketActive = false;
+    private int currentRocketSalvos;
+    private Coroutine rocketCoroutine;
+
     // --- Variables de estado y coroutines (reducidas para God Mode) ---
     private bool isPowerBallActive = false;
     private Coroutine powerBallCoroutine;
@@ -212,6 +222,9 @@ public class PowerUpManager : MonoBehaviour
             case PowerUpType.GodMode:
                 ActivateGodMode();
                 break;
+            case PowerUpType.Rocket:
+                ActivateRocket();
+                break;
         }
     }
 
@@ -355,21 +368,21 @@ public class PowerUpManager : MonoBehaviour
     // --- Magnet Logic ---
     private void ActivateMagnet()
     {
-        if (!isMagnetActive)
+        // Forzar la desactivación primero para limpiar el estado
+        if (isMagnetActive)
         {
-            isMagnetActive = true;
-            currentMagnetUses = maxMagnetUses;
-            Debug.Log($"Magnet activado! Usos restantes: {currentMagnetUses}");
-
-            if (ballScript != null)
-            {
-                ballScript.SetMagnetPowerUp(true);
-            }
+            DeactivateMagnet();
         }
-        else
+
+        // Ahora activar limpiamente
+        isMagnetActive = true;
+        currentMagnetUses = maxMagnetUses;
+
+        Debug.Log($"Magnet activado! Usos restantes: {currentMagnetUses}");
+
+        if (ballScript != null)
         {
-            currentMagnetUses = maxMagnetUses;
-            Debug.Log($"Magnet ya estaba activo, usos reiniciados: {currentMagnetUses}");
+            ballScript.SetMagnetPowerUp(true);
         }
     }
 
@@ -391,12 +404,15 @@ public class PowerUpManager : MonoBehaviour
         if (!isMagnetActive) return;
 
         isMagnetActive = false;
+        currentMagnetUses = 0; // Reset del contador
+
         if (ballScript != null)
         {
             ballScript.SetMagnetPowerUp(false);
-            ballScript.ReleaseBall();
+            ballScript.ReleaseBall(); // Asegurar que la bola se libere
         }
-        Debug.Log("Magnet desactivado!");
+
+        Debug.Log("Magnet desactivado completamente!");
     }
 
     // --- Extra Life Logic ---
@@ -455,8 +471,95 @@ public class PowerUpManager : MonoBehaviour
         DeactivateSmallPaddle();
 
         DeactivateMagnet();
+        DeactivateRocket();
+
+        DestroyAllActivePowerUps();
 
         hasNextLevelPowerUpBeenDroppedThisLevel = false;
+    }
+
+    // --- Rocket Logic ---
+    private void ActivateRocket()
+    {
+        if (isRocketActive)
+        {
+            // Si ya está activo, reiniciar el conteo
+            if (rocketCoroutine != null) StopCoroutine(rocketCoroutine);
+            currentRocketSalvos = maxRocketSalvos;
+            rocketCoroutine = StartCoroutine(RocketCoroutine());
+            Debug.Log("Rocket power-up reiniciado!");
+            return;
+        }
+
+        isRocketActive = true;
+        currentRocketSalvos = maxRocketSalvos;
+        rocketCoroutine = StartCoroutine(RocketCoroutine());
+        Debug.Log("Rocket power-up activado!");
+    }
+
+    private IEnumerator RocketCoroutine()
+    {
+        while (currentRocketSalvos > 0 && paddleScript != null)
+        {
+            // Disparar cohetes desde ambos extremos de la paleta
+            FireRockets();
+            currentRocketSalvos--;
+
+            if (currentRocketSalvos > 0)
+            {
+                yield return new WaitForSeconds(rocketFireInterval);
+            }
+        }
+
+        DeactivateRocket();
+    }
+
+    private void FireRockets()
+    {
+        if (paddleScript == null || rocketPrefab == null) return;
+
+        Vector3 paddlePosition = paddleScript.transform.position;
+
+        // Obtener los límites reales de la paleta usando su Renderer
+        Renderer paddleRenderer = paddleScript.GetComponent<Renderer>();
+        if (paddleRenderer != null)
+        {
+            // Usar los bounds del renderer para obtener las posiciones exactas de los bordes
+            Bounds paddleBounds = paddleRenderer.bounds;
+
+            // Posiciones exactas en los bordes laterales de la paleta
+            Vector3 leftRocketPos = new Vector3(paddleBounds.min.x, paddlePosition.y + 0.2f, paddlePosition.z + 0.3f);
+            Vector3 rightRocketPos = new Vector3(paddleBounds.max.x, paddlePosition.y + 0.2f, paddlePosition.z + 0.3f);
+
+            // Crear los cohetes en las posiciones exactas de los bordes
+            Instantiate(rocketPrefab, leftRocketPos, Quaternion.identity);
+            Instantiate(rocketPrefab, rightRocketPos, Quaternion.identity);
+
+            Debug.Log($"Cohetes disparados desde bordes de paleta! Escala actual: {paddleScript.transform.localScale.x}. Ráfagas restantes: {currentRocketSalvos - 1}");
+        }
+        else
+        {
+            // Fallback: si no hay renderer, usar el método anterior como respaldo
+            Debug.LogWarning("No se encontró Renderer en la paleta, usando cálculo aproximado");
+            float paddleWidth = paddleScript.transform.localScale.x * 2f;
+            Vector3 leftRocketPos = paddlePosition + new Vector3(-paddleWidth / 2f, 0.2f, 0.3f);
+            Vector3 rightRocketPos = paddlePosition + new Vector3(paddleWidth / 2f, 0.2f, 0.3f);
+
+            Instantiate(rocketPrefab, leftRocketPos, Quaternion.identity);
+            Instantiate(rocketPrefab, rightRocketPos, Quaternion.identity);
+            Debug.Log($"Cohetes disparados! Ráfagas restantes: {currentRocketSalvos - 1}");
+        }
+    }
+
+    private void DeactivateRocket()
+    {
+        isRocketActive = false;
+        if (rocketCoroutine != null)
+        {
+            StopCoroutine(rocketCoroutine);
+            rocketCoroutine = null;
+        }
+        Debug.Log("Rocket power-up desactivado!");
     }
 
     public void DestroyAllActivePowerUps()
@@ -483,5 +586,6 @@ public enum PowerUpType
     Magnet,
     ExtraLife,
     NextLevel,
-    GodMode
+    GodMode,
+    Rocket
 }
