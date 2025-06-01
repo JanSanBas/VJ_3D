@@ -1,3 +1,4 @@
+// ScriptCohete.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,22 +17,18 @@ public class ScriptCohete : MonoBehaviour
             rb = gameObject.AddComponent<Rigidbody>();
         }
 
-        // Configurar el Rigidbody
         rb.useGravity = false;
         rb.isKinematic = false;
         rb.freezeRotation = true;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
-        // Lanzar el cohete hacia adelante
         rb.velocity = Vector3.forward * speed;
 
-        // Destruir el cohete después de un tiempo (por si no golpea nada)
         Destroy(gameObject, 10f);
     }
 
     void Update()
     {
-        // Destruir si sale de los límites del juego
         if (transform.position.z > 10f)
         {
             Destroy(gameObject);
@@ -40,13 +37,16 @@ public class ScriptCohete : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Cubo"))
+        if (other.CompareTag("Cubo") || other.CompareTag("Pared"))
         {
-            // Destruir el cubo
-            ScriptCube cubeScript = other.GetComponent<ScriptCube>();
-            if (cubeScript != null)
+            // Solo para el cubo, activa la lógica de destrucción
+            if (other.CompareTag("Cubo"))
             {
-                cubeScript.collisionWithBall("Rocket"); // Usar el mismo método que usa la bola
+                ScriptCube cubeScript = other.GetComponent<ScriptCube>();
+                if (cubeScript != null)
+                {
+                    cubeScript.collisionWithBall("Rocket"); // Asumiendo que esta función gestiona la destrucción del cubo
+                }
             }
 
             // Crear efecto de explosión si existe
@@ -56,17 +56,13 @@ public class ScriptCohete : MonoBehaviour
                 Destroy(explosion, 2f);
             }
 
-            // Autodestruirse
-            Destroy(gameObject);
-        }
-        else if (other.CompareTag("Pared"))
-        {
-            // Opcional: crear efecto y destruirse al golpear paredes
-            if (explosionPrefab != null)
+            // Reproducir sonido de explosión
+            if (GameManager.Instance != null && GameManager.Instance.hitRocket != null)
             {
-                GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-                Destroy(explosion, 2f);
+                AudioSource.PlayClipAtPoint(GameManager.Instance.hitRocket, transform.position);
             }
+
+            // Autodestruirse
             Destroy(gameObject);
         }
     }
@@ -75,31 +71,40 @@ public class ScriptCohete : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Cubo"))
         {
-            // Destruir el cubo
             ScriptCube cubeScript = collision.gameObject.GetComponent<ScriptCube>();
             if (cubeScript != null)
             {
                 cubeScript.collisionWithBall("Rocket");
             }
 
-            // Crear efecto de explosión si existe
             if (explosionPrefab != null)
             {
                 GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
                 Destroy(explosion, 2f);
             }
 
-            // Autodestruirse
+            // Reproducir sonido de explosión
+            if (GameManager.Instance != null && GameManager.Instance.hitRocket != null)
+            {
+                AudioSource.PlayClipAtPoint(GameManager.Instance.hitRocket, transform.position);
+            }
+
             Destroy(gameObject);
         }
         else if (collision.gameObject.CompareTag("Pared"))
         {
-            // Opcional: crear efecto y destruirse al golpear paredes
             if (explosionPrefab != null)
             {
                 GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
                 Destroy(explosion, 2f);
             }
+
+            // Reproducir sonido de explosión
+            if (GameManager.Instance != null && GameManager.Instance.hitRocket != null)
+            {
+                AudioSource.PlayClipAtPoint(GameManager.Instance.hitRocket, transform.position);
+            }
+
             Destroy(gameObject);
         }
     }

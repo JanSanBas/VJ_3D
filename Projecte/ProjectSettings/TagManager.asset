@@ -11,11 +11,10 @@ TagManager:
   - Paleta
   - GameManager
   - PowerUp
-
+  - "Ping\xFCino"
+  - Perro
   - Gato
   - Elefante
-  - Perro
-  - "Ping\xFCino"
   - Cuervo
   - Rocket
   layers:
