@@ -7666,6 +7666,7 @@ MonoBehaviour:
   destroyElephant: {fileID: 0}
   destroyDog: {fileID: 1419275802}
   destroyPenguin: {fileID: 0}
+  destroyCrow: {fileID: 0}
   powerUp: {fileID: 1419275801}
   fail: {fileID: 1419275798}
   hitPaleta: {fileID: 1419275799}
@@ -9394,6 +9395,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6133781041798331701, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
+      propertyPath: rocketPrefab
+      value: 
+      objectReference: {fileID: 3244350561022305153, guid: 899ad38e2d095c442ab31e55bae6ebf9, type: 3}
     - target: {fileID: 6133781041798331701, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
       propertyPath: powerUpPrefab
       value: 

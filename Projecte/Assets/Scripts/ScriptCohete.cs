@@ -46,7 +46,7 @@ public class ScriptCohete : MonoBehaviour
             ScriptCube cubeScript = other.GetComponent<ScriptCube>();
             if (cubeScript != null)
             {
-                cubeScript.collisionWithBall(); // Usar el mismo método que usa la bola
+                cubeScript.collisionWithBall("Rocket"); // Usar el mismo método que usa la bola
             }
 
             // Crear efecto de explosión si existe
@@ -79,7 +79,7 @@ public class ScriptCohete : MonoBehaviour
             ScriptCube cubeScript = collision.gameObject.GetComponent<ScriptCube>();
             if (cubeScript != null)
             {
-                cubeScript.collisionWithBall();
+                cubeScript.collisionWithBall("Rocket");
             }
 
             // Crear efecto de explosión si existe

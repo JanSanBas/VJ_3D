@@ -1287,6 +1287,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6133781041798331701, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
+      propertyPath: rocketPrefab
+      value: 
+      objectReference: {fileID: 3244350561022305153, guid: 899ad38e2d095c442ab31e55bae6ebf9, type: 3}
+    - target: {fileID: 6133781041798331701, guid: 9d45d243b9f199e45b5ad2003adec816, type: 3}
       propertyPath: powerUpPrefab
       value: 
       objectReference: {fileID: 1378974225}
@@ -7656,6 +7660,9 @@ MonoBehaviour:
   destroyCube: {fileID: 1415911189}
   destroyCat: {fileID: 0}
   destroyElephant: {fileID: 1415911193}
+  destroyDog: {fileID: 0}
+  destroyPenguin: {fileID: 0}
+  destroyCrow: {fileID: 0}
   powerUp: {fileID: 1415911194}
   fail: {fileID: 1415911190}
   hitPaleta: {fileID: 1415911191}
